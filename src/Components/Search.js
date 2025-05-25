@@ -17,6 +17,7 @@ const Search = () => {
                 console.error('Error fetching policies:', error);
             }
         };
+        
         fetchPolicies();
     }, []);
 
