@@ -9,6 +9,7 @@ import RegistrationForm from './Components/Registration';
 import AddPolicy from './Components/Add_policy';
 import Login from './Components/Login';
 import ClaimForm from './Components/Claim';
+import UpdatePolicy from './Components/UpdatePolicy';
 
 
 
@@ -24,6 +25,7 @@ function App() {
       <Route path="/" element={<Dashboard />} />
       <Route path="/PolicyFeatch" element={<PolicyFeatch />} />
       <Route path="/Add_policy" element={<AddPolicy />} />
+      <Route path="/UpdatePolicy" element={<UpdatePolicy/>} />
       <Route path="/Registration" element={<RegistrationForm/>}/>
       <Route path="/Login" element={<Login/>} />
       <Route path="/Claims" element={<ClaimForm/>} />
