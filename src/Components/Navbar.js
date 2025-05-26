@@ -49,7 +49,7 @@ const Navbar = () => {
               </ul>
             )}
           </li>
-          <li><Link to="/claims" className="text-white hover:text-gray-300">Claims</Link></li>
+          <li><Link to="/Claims" className="text-white hover:text-gray-300">Claims</Link></li>
           <li><Link to="/contact" className="text-white hover:text-gray-300">Contact</Link></li>
         </ul>
         <button className="md:hidden text-white bg-blue-500 p-2 rounded">Menu</button>

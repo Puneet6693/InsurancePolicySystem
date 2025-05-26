@@ -8,6 +8,7 @@ import Dashboard from './Components/Dashboard';
 import RegistrationForm from './Components/Registration';
 import AddPolicy from './Components/Add_policy';
 import Login from './Components/Login';
+import ClaimForm from './Components/Claim';
 
 
 
@@ -25,6 +26,7 @@ function App() {
       <Route path="/Add_policy" element={<AddPolicy />} />
       <Route path="/Registration" element={<RegistrationForm/>}/>
       <Route path="/Login" element={<Login/>} />
+      <Route path="/Claims" element={<ClaimForm/>} />
       </Routes>
     </Router> 
     
