@@ -26,6 +26,12 @@ const Navbar = () => {
         >
           Register Now
         </button>
+        <button 
+          onClick={() => navigate("/Login")} 
+          className="text-white bg-blue-500 p-2 rounded"
+        >
+          Login 
+        </button>
         <ul className="hidden md:flex space-x-6">
           <li><Link to="/" className="text-white hover:text-gray-300">Dashboard</Link></li>
           <li className="relative">

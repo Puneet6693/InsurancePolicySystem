@@ -7,6 +7,7 @@ import PolicyFeatch from './Components/PolicyFeatch';
 import Dashboard from './Components/Dashboard';
 import RegistrationForm from './Components/Registration';
 import AddPolicy from './Components/Add_policy';
+import Login from './Components/Login';
 
 
 
@@ -23,6 +24,7 @@ function App() {
       <Route path="/PolicyFeatch" element={<PolicyFeatch />} />
       <Route path="/Add_policy" element={<AddPolicy />} />
       <Route path="/Registration" element={<RegistrationForm/>}/>
+      <Route path="/Login" element={<Login/>} />
       </Routes>
     </Router> 
     
