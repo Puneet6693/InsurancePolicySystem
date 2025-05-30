@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState, useContext } from "react";
+import { StoreContext } from "../services/StoreContext"; // Import StoreContext for token management
 
 const UpdatePolicy = () => {
+    const { token } = useContext(StoreContext); // Access token from StoreContext
     const [policyId, setPolicyId] = useState(""); // Allow manual input for policy ID
     const [formData, setFormData] = useState({
         policy_Name: "",
@@ -24,9 +25,16 @@ const UpdatePolicy = () => {
             return;
         }
         try {
-            const response = await axios.get(`https://localhost:7251/api/Policies/${policyId}`);
-            if (response.status === 200) {
-                setFormData(response.data);
+            const response = await fetch(`https://localhost:7251/api/Policies/${policyId}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`, // Include token in Authorization header
+                },
+            });
+            if (response.ok) {
+                const policy = await response.json();
+                setFormData(policy);
                 setMessage("Policy details loaded successfully!");
             } else {
                 setMessage("Error fetching policy details.");
@@ -65,8 +73,19 @@ const UpdatePolicy = () => {
         }
 
         try {
-            await axios.put(`https://localhost:7251/api/Policies/${policyId}`, formData);
-            setMessage("Policy updated successfully!");
+            const response = await fetch(`https://localhost:7251/api/Policies/${policyId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`, // Include token in Authorization header
+                },
+                body: JSON.stringify(formData),
+            });
+            if (response.ok) {
+                setMessage("Policy updated successfully!");
+            } else {
+                setMessage("Error updating policy.");
+            }
         } catch (error) {
             setMessage("Error updating policy: " + error.message);
         }

@@ -18,6 +18,16 @@ const ClaimsFetch = () => {
         fetchClaims();
     }, []);
 
+    const updateClaimStatus = async (claimID, status) => {
+        try {
+            await axios.put(`https://localhost:7251/api/Claims/${claimID}`, { status }); // Update claim status
+            alert(`Claim ${claimID} updated to ${status}`);
+        } catch (err) {
+            console.error("Error updating claim status:", err);
+            alert("Failed to update claim status.");
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
             <h2 className="text-3xl font-bold mb-6 text-center text-blue-600">Claims List</h2>
@@ -41,13 +51,16 @@ const ClaimsFetch = () => {
                                     <td className="border px-6 py-3">{claim.policyID}</td>
                                     <td className="border px-6 py-3">{claim.customer?.customer_Name || "N/A"}</td>
                                     <td className="border px-6 py-3">${claim.claimAmount}</td>
-                                    <td className="border px-6 py-3">{claim.status}
-                                    <button
-                                        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition"
-                                        onClick={() => updateClaimStatus(claim.claimID)}
-                                          >
-                                         Approve
-                                        </button>
+                                    <td className="border px-6 py-3 flex items-center gap-4">
+                                        <span>{claim.status}</span>
+                                        <select
+                                            className="bg-gray-200 text-gray-700 px-2 py-1 rounded-md focus:outline-none"
+                                            onChange={(e) => updateClaimStatus(claim.claimID, e.target.value)}
+                                        >
+                                            <option value="">Change Status</option>
+                                            <option value="Approved">Approve</option>
+                                            <option value="Rejected">Reject</option>
+                                        </select>
                                     </td>
                                 </tr>
                             ))

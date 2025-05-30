@@ -36,6 +36,12 @@ const PolicyDetails = () => {
         <p><strong>Validity Period:</strong> {policy.validityPeriod}</p>
         {/* <p><strong>Agent ID:</strong> {policy.agent?.agentID}</p>  */}
         <p><strong>Agent Name:</strong> {policy.agent?.agent_Name}</p> 
+        <button
+            // onClick={handleBuyPolicy}
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+        >
+            Buy Policy
+        </button>
     </div>
     );
 };

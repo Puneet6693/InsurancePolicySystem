@@ -45,8 +45,19 @@ const AddPolicyForm = () => {
     };
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    
+        if (name === "validityStart" || name === "validityEnd") {
+            if (formData.validityStart && formData.validityEnd) {
+                setFormData((prevData) => ({
+                    ...prevData,
+                    validityPeriod: `${prevData.validityStart} to ${prevData.validityEnd}`,
+                }));
+            }
+        }
     };
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
