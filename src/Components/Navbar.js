@@ -7,10 +7,20 @@ const Navbar = () => {
   const { token, logout, user } = useContext(StoreContext); // Access token, logout, and user from StoreContext
   const navigate = useNavigate();
 
-  const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
+  const [isPoliciesDropdownOpen, setIsPoliciesDropdownOpen] = React.useState(false);
+  const [isClaimsDropdownOpen, setIsClaimsDropdownOpen] = React.useState(false);
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
+  const togglePoliciesDropdown = () => {
+    setIsPoliciesDropdownOpen(!isPoliciesDropdownOpen);
+  };
+
+  const toggleClaimsDropdown = () => {
+    setIsClaimsDropdownOpen(!isClaimsDropdownOpen);
+  };
+
+  const closeDropdowns = () => {
+    setIsPoliciesDropdownOpen(false);
+    setIsClaimsDropdownOpen(false);
   };
 
   const handleSearch = (event) => {
@@ -65,21 +75,34 @@ const Navbar = () => {
           <li><Link to="/" className="text-white hover:text-gray-300">Dashboard</Link></li>
           <li className="relative">
             <button 
-              onClick={toggleDropdown} 
+              onClick={togglePoliciesDropdown} 
               className="text-white hover:text-gray-300 focus:outline-none"
             >
               Policies
             </button>
-            {isDropdownOpen && (
+            {isPoliciesDropdownOpen && (
               <ul className="absolute bg-white text-black mt-2 rounded shadow-lg z-50 border border-gray-300">
-                <li><Link to="/PolicyFeatch" className="block px-4 py-2 hover:bg-blue-100">View Policies</Link></li>
-                <li><Link to="/Add_policy" className="block px-4 py-2 hover:bg-blue-100">Add Policy</Link></li>
-                <li><Link to="/UpdatePolicy" className="block px-4 py-2 hover:bg-blue-100">Update Policy</Link></li>
-                <li><Link to="/DeletePolicy" className="block px-4 py-2 hover:bg-blue-100">Remove Policy</Link></li>
+                <li><Link to="/PolicyFeatch" className="block px-4 py-2 hover:bg-blue-100" onClick={closeDropdowns}>View Policies</Link></li>
+                <li><Link to="/Add_policy" className="block px-4 py-2 hover:bg-blue-100" onClick={closeDropdowns}>Add Policy</Link></li>
+                <li><Link to="/UpdatePolicy" className="block px-4 py-2 hover:bg-blue-100" onClick={closeDropdowns}>Update Policy</Link></li>
+                <li><Link to="/DeletePolicy" className="block px-4 py-2 hover:bg-blue-100" onClick={closeDropdowns}>Remove Policy</Link></li>
               </ul>
             )}
           </li>
-          <li><Link to="/Claims" className="text-white hover:text-gray-300">Claims</Link></li>
+          <li className="relative">
+            <button 
+              onClick={toggleClaimsDropdown} 
+              className="text-white hover:text-gray-300 focus:outline-none"
+            >
+              Claims
+            </button>
+            {isClaimsDropdownOpen && (
+              <ul className="absolute bg-white text-black mt-2 rounded shadow-lg z-50 border border-gray-300">
+                <li><Link to="/GetAllClaims" className="block px-4 py-2 hover:bg-blue-100" onClick={closeDropdowns}>Get All Claims</Link></li>
+                <li><Link to="/Claim" className="block px-4 py-2 hover:bg-blue-100" onClick={closeDropdowns}>Add Claim</Link></li>
+              </ul>
+            )}
+          </li>
           <li><Link to="/contact" className="text-white hover:text-gray-300">Contact</Link></li>
         </ul>
         <button className="md:hidden text-white bg-blue-500 p-2 rounded">Menu</button>

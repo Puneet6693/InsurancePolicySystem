@@ -32,6 +32,7 @@ export const Datafetch = () => {
                             <th className="px-6 py-3 text-left font-semibold">Coverage Details</th>
                             <th className="px-6 py-3 text-left font-semibold">Validity Period</th>
                             <th className="px-6 py-3 text-left font-semibold">Agent ID</th>
+                            <th className="px-6 py-3 text-left font-semibold">Agent Name</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -44,6 +45,7 @@ export const Datafetch = () => {
                                     <td className="border px-6 py-3">{policy.coverageDetails}</td>
                                     <td className="border px-6 py-3">{policy.validityPeriod}</td>
                                     <td className="border px-6 py-3">{policy.agentID}</td>
+                                    <td className="border px-6 py-3">{policy.agent?.agent_Name || "N/A"}</td>   
                                 </tr>
                             ))
                         ) : (

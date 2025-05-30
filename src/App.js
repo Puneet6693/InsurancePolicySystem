@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 
 import Navbar from './Components/Navbar';
@@ -11,34 +11,83 @@ import ClaimForm from './Components/Claim';
 import UpdatePolicy from './Components/UpdatePolicy';
 import PolicyTab from './Components/PolicyTab';
 import PolicyDetails from './Components/PolicyById';
-import { StoreContextProvider } from './services/StoreContext';
+import { StoreContextProvider, StoreContext } from './services/StoreContext';
 import DeletePolicy from './Components/DeletePolicy';
+import ClaimsFetch from './Components/GetAllClaims';
+
+// Private Route Wrapper
+const PrivateRoute = ({ children }) => {
+  const { token } = useContext(StoreContext); // Check if token exists
+  return token ? children : <Navigate to="/Login" />;
+};
 
 function App() {
   return (
-    
     <StoreContextProvider>
-    <Router>
-      <Navbar />
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/Dashboard" element={<PolicyTab />} />
-        <Route path="/policy-details/:id" element={<PolicyDetails />} />
-        <Route path="/Registration" element={<RegistrationForm />} />
-        <Route path="/Login" element={<Login />} />
+      <Router>
+        <Navbar />
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/Dashboard" element={<PolicyTab />} />
+          <Route path="/policy-details/:id" element={<PolicyDetails />} />
+          <Route path="/Registration" element={<RegistrationForm />} />
+          <Route path="/Login" element={<Login />} />
 
-        {/* Other Routes (No authentication checks) */}
-        <Route path="/PolicyFeatch" element={<PolicyFeatch />} />
-        <Route path="/Add_policy" element={<AddPolicy />} />
-        <Route path="/UpdatePolicy" element={<UpdatePolicy />} />
-        <Route path="/DeletePolicy" element={<DeletePolicy/>} />
-        <Route path="/Claims" element={<ClaimForm />} />
+          {/* Protected Routes */}
+          <Route 
+            path="/PolicyFeatch" 
+            element={
+              <PrivateRoute>
+                <PolicyFeatch />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/Add_policy" 
+            element={
+              <PrivateRoute>
+                <AddPolicy />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/UpdatePolicy" 
+            element={
+              <PrivateRoute>
+                <UpdatePolicy />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/DeletePolicy" 
+            element={
+              <PrivateRoute>
+                <DeletePolicy />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/GetAllClaims" 
+            element={
+              <PrivateRoute>
+                <ClaimsFetch />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/Claim" 
+            element={
+              <PrivateRoute>
+                <ClaimForm />
+              </PrivateRoute>
+            } 
+          />
 
-        {/* Fallback Route */}
-        <Route path="*" element={<Navigate to="/Login" />} />
-      </Routes>
-    </Router>
+          {/* Fallback Route */}
+          <Route path="*" element={<Navigate to="/Login" />} />
+        </Routes>
+      </Router>
     </StoreContextProvider>
   );
 }

@@ -13,7 +13,7 @@ const PolicyTab = () => {
   useEffect(() => {
     const fetchPolicies = async () => {
       try {
-        const response = await axiosInstance.get("/api/Policies"); // Use axiosInstance
+        const response = await axiosInstance.get("https://localhost:7251/api/Policies"); // Use axiosInstance
         const formattedPolicies = response.data.map(policy => ({
           policyName: policy.policy_Name,
           policyPremium: policy.premiumAmount,
