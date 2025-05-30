@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { StoreContext } from "../services/StoreContext";
 
 const Navbar = () => {
+  const { token, logout, user } = useContext(StoreContext); // Access token, logout, and user from StoreContext
   const navigate = useNavigate();
 
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
@@ -11,27 +13,54 @@ const Navbar = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
+  const handleSearch = (event) => {
+    const query = event.target.value;
+    navigate(`/search?query=${query}`);
+  };
+
   return (
     <nav className="bg-blue-600 p-4 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
-        <h1 className="text-white text-lg font-bold">Insurance System</h1>
+        <h1 
+          className="text-white text-lg font-bold cursor-pointer" 
+          onClick={() => navigate("/")}
+        >
+          Insurance System
+        </h1>
         <input 
           type="text" 
           placeholder="Search Policy..." 
           className="hidden md:block px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          onChange={handleSearch}
         />
-        <button 
-          onClick={() => navigate("/Registration")} 
-          className="text-white bg-blue-500 p-2 rounded"
-        >
-          Register Now
-        </button>
-        <button 
-          onClick={() => navigate("/Login")} 
-          className="text-white bg-blue-500 p-2 rounded"
-        >
-          Login 
-        </button>
+        <div className="flex items-center space-x-4">
+          {token ? (
+            <>
+              <span className="text-white">Welcome, {user?.username || "User"}</span>
+              <button 
+                onClick={logout} 
+                className="text-white bg-red-500 p-2 rounded hover:bg-red-600"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <button 
+                onClick={() => navigate("/Registration")} 
+                className="text-white bg-blue-500 p-2 rounded"
+              >
+                Register Now
+              </button>
+              <button 
+                onClick={() => navigate("/Login")} 
+                className="text-white bg-blue-500 p-2 rounded"
+              >
+                Login
+              </button>
+            </>
+          )}
+        </div>
         <ul className="hidden md:flex space-x-6">
           <li><Link to="/" className="text-white hover:text-gray-300">Dashboard</Link></li>
           <li className="relative">
@@ -46,7 +75,7 @@ const Navbar = () => {
                 <li><Link to="/PolicyFeatch" className="block px-4 py-2 hover:bg-blue-100">View Policies</Link></li>
                 <li><Link to="/Add_policy" className="block px-4 py-2 hover:bg-blue-100">Add Policy</Link></li>
                 <li><Link to="/UpdatePolicy" className="block px-4 py-2 hover:bg-blue-100">Update Policy</Link></li>
-                <li><Link to="/policy-reports" className="block px-4 py-2 hover:bg-blue-100">Policy Reports</Link></li>
+                <li><Link to="/DeletePolicy" className="block px-4 py-2 hover:bg-blue-100">Remove Policy</Link></li>
               </ul>
             )}
           </li>

@@ -1,7 +1,9 @@
-import React, { useState } from "react";
-import axios from "axios";
+
+import React, { useState, useContext } from "react";
+import { StoreContext } from "../services/StoreContext";
 
 const AddPolicyForm = () => {
+    const { axiosInstance } = useContext(StoreContext); // Use axiosInstance from StoreContext
     const [formData, setFormData] = useState({
         policy_Name: "",
         premiumAmount: "",
@@ -14,11 +16,29 @@ const AddPolicyForm = () => {
 
     const validate = () => {
         let tempErrors = {};
-        if (!formData.policy_Name.trim()) tempErrors.policy_Name = "Policy Name is required!";
-        if (!formData.premiumAmount.trim() || isNaN(formData.premiumAmount)) tempErrors.premiumAmount = "Valid Premium Amount is required!";
-        if (!formData.coverageDetails.trim()) tempErrors.coverageDetails = "Coverage Details are required!";
-        if (!formData.validityPeriod.trim()) tempErrors.validityPeriod = "Validity Period is required!";
-        if (!formData.agentID.trim() || isNaN(formData.agentID)) tempErrors.agentID = "Valid Agent ID is required!";
+        const policyNameRegex = /^[a-zA-Z0-9\s]{3,50}$/; // Alphanumeric, 3-50 characters
+
+        if (!formData.policy_Name.trim()) {
+            tempErrors.policy_Name = "Policy Name is required!";
+        } else if (!policyNameRegex.test(formData.policy_Name)) {
+            tempErrors.policy_Name = "Policy Name must be alphanumeric and 3-50 characters long!";
+        }
+
+        if (!formData.premiumAmount.trim() || isNaN(formData.premiumAmount) || Number(formData.premiumAmount) <= 0) {
+            tempErrors.premiumAmount = "Premium Amount must be a positive number!";
+        }
+
+        if (!formData.coverageDetails.trim()) {
+            tempErrors.coverageDetails = "Coverage Details are required!";
+        }
+
+        if (!formData.validityPeriod.trim()) {
+            tempErrors.validityPeriod = "Validity Period is required!";
+        }
+
+        if (!formData.agentID.trim() || isNaN(formData.agentID) || Number(formData.agentID) <= 0) {
+            tempErrors.agentID = "Agent ID must be a positive number!";
+        }
 
         setErrors(tempErrors);
         return Object.keys(tempErrors).length === 0;
@@ -33,7 +53,7 @@ const AddPolicyForm = () => {
         if (!validate()) return;
 
         try {
-            const response = await axios.post("https://localhost:7251/api/Policies", formData);
+            const response = await axiosInstance.post("/api/Policies", formData); // Use axiosInstance
             console.log(response.data);
             setMessage(`Success! ${response.data.message}`);
             setFormData({
@@ -45,7 +65,12 @@ const AddPolicyForm = () => {
             }); // Reset form
             setErrors({});
         } catch (error) {
-            setMessage("Error submitting form: " + error.message);
+            console.error("Error submitting form:", error);
+            if (error.response?.data?.message) {
+                setMessage("Error: " + error.response.data.message);
+            } else {
+                setMessage("Error submitting form: " + error.message);
+            }
         }
     };
 
@@ -73,6 +98,7 @@ const AddPolicyForm = () => {
                         className="w-full px-4 py-2 border rounded-md"
                         onChange={handleChange}
                         value={formData.premiumAmount}
+                        min="1" // Prevent negative values
                         required
                     />
                     {errors.premiumAmount && <p style={{ color: "red" }}>{errors.premiumAmount}</p>}
@@ -106,6 +132,7 @@ const AddPolicyForm = () => {
                         className="w-full px-4 py-2 border rounded-md"
                         onChange={handleChange}
                         value={formData.agentID}
+                        min="1" // Prevent negative values
                         required
                     />
                     {errors.agentID && <p style={{ color: "red" }}>{errors.agentID}</p>}

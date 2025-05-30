@@ -19,39 +19,41 @@ export const Datafetch = () => {
     }, []);
 
     return (
-        <div>
-            <h2 className="text-lg font-bold mb-4">Policy List</h2>
-            {error && <p className="text-red-500">Error fetching data: {error}</p>}
-            <table className="table-auto border-collapse border border-gray-400">
-                <thead>
-                    <tr>
-                        <th className="px-4 py-2 border">Policy ID</th>
-                        <th className="px-4 py-2 border">Policy Name</th>
-                        <th className="px-4 py-2 border">Premium Amount</th>
-                        <th className="px-4 py-2 border">Coverage Details</th>
-                        <th className="px-4 py-2 border">Validity Period</th>
-                        <th className="px-4 py-2 border">Agent ID</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {data.length > 0 ? (
-                        data.map((policy) => (
-                            <tr key={policy.policyID}>
-                                <td className="border px-4 py-2">{policy.policyID}</td>
-                                <td className="border px-4 py-2">{policy.policy_Name}</td>
-                                <td className="border px-4 py-2">{policy.premiumAmount}</td>
-                                <td className="border px-4 py-2">{policy.coverageDetails}</td>
-                                <td className="border px-4 py-2">{policy.validityPeriod}</td>
-                                <td className="border px-4 py-2">{policy.agentID}</td>
-                            </tr>
-                        ))
-                    ) : (
+        <div className="container mx-auto p-6">
+            <h2 className="text-3xl font-bold mb-6 text-center text-blue-600">Policy List</h2>
+            {error && <p className="text-red-500 text-center mb-4">Error fetching data: {error}</p>}
+            <div className="overflow-x-auto shadow-lg rounded-lg">
+                <table className="table-auto w-full border border-gray-300 rounded-lg">
+                    <thead className="bg-yellow-500 text-white">
                         <tr>
-                            <td className="border px-4 py-2 text-center" colSpan="6">No data available.</td>
+                            <th className="px-6 py-3 text-left font-semibold">Policy ID</th>
+                            <th className="px-6 py-3 text-left font-semibold">Policy Name</th>
+                            <th className="px-6 py-3 text-left font-semibold">Premium Amount</th>
+                            <th className="px-6 py-3 text-left font-semibold">Coverage Details</th>
+                            <th className="px-6 py-3 text-left font-semibold">Validity Period</th>
+                            <th className="px-6 py-3 text-left font-semibold">Agent ID</th>
                         </tr>
-                    )}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {data.length > 0 ? (
+                            data.map((policy) => (
+                                <tr key={policy.policyID} className="hover:bg-gray-100">
+                                    <td className="border px-6 py-3">{policy.policyID}</td>
+                                    <td className="border px-6 py-3">{policy.policy_Name}</td>
+                                    <td className="border px-6 py-3">{policy.premiumAmount}</td>
+                                    <td className="border px-6 py-3">{policy.coverageDetails}</td>
+                                    <td className="border px-6 py-3">{policy.validityPeriod}</td>
+                                    <td className="border px-6 py-3">{policy.agentID}</td>
+                                </tr>
+                            ))
+                        ) : (
+                            <tr>
+                                <td className="border px-6 py-3 text-center" colSpan="6">No data available.</td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 };
