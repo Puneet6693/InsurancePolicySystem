@@ -1,31 +1,19 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { StoreContext } from "../services/StoreContext";
 
 const Navbar = () => {
-  const { token, logout, user } = useContext(StoreContext); // Access token, logout, and user from StoreContext
+  const { token, logout, user } = useContext(StoreContext);
   const navigate = useNavigate();
 
   const [isPoliciesDropdownOpen, setIsPoliciesDropdownOpen] = React.useState(false);
   const [isClaimsDropdownOpen, setIsClaimsDropdownOpen] = React.useState(false);
 
-  const togglePoliciesDropdown = () => {
-    setIsPoliciesDropdownOpen(!isPoliciesDropdownOpen);
-  };
-
-  const toggleClaimsDropdown = () => {
-    setIsClaimsDropdownOpen(!isClaimsDropdownOpen);
-  };
-
+  const togglePoliciesDropdown = () => setIsPoliciesDropdownOpen(!isPoliciesDropdownOpen);
+  const toggleClaimsDropdown = () => setIsClaimsDropdownOpen(!isClaimsDropdownOpen);
   const closeDropdowns = () => {
     setIsPoliciesDropdownOpen(false);
     setIsClaimsDropdownOpen(false);
-  };
-
-  const handleSearch = (event) => {
-    const query = event.target.value;
-    navigate(`/search?query=${query}`);
   };
 
   return (
@@ -37,12 +25,14 @@ const Navbar = () => {
         >
           Insurance System
         </h1>
-        <input 
-          type="text" 
-          placeholder="Search Policy..." 
-          className="hidden md:block px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          onChange={handleSearch}
-        />
+        <div className="flex-1 flex justify-center">
+          <input 
+            type="text" 
+            placeholder="Search Policy..." 
+            className="hidden md:block w-1/2 px-4 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            onChange={(event) => navigate(`/search?query=${event.target.value}`)}
+          />
+        </div>
         <div className="flex items-center space-x-4">
           {token ? (
             <>
@@ -71,13 +61,11 @@ const Navbar = () => {
             </>
           )}
         </div>
-        <ul className="hidden md:flex space-x-6">
+        <ul className="hidden md:flex space-x-6 flex-grow justify-center">
           <li><Link to="/" className="text-white hover:text-gray-300">Dashboard</Link></li>
+          {/* <li><Link to="/Admin" className="text-white hover:text-gray-300">Admin Dashboard</Link></li> */}
           <li className="relative">
-            <button 
-              onClick={togglePoliciesDropdown} 
-              className="text-white hover:text-gray-300 focus:outline-none"
-            >
+            <button onClick={togglePoliciesDropdown} className="text-white hover:text-gray-300">
               Policies
             </button>
             {isPoliciesDropdownOpen && (
@@ -90,10 +78,7 @@ const Navbar = () => {
             )}
           </li>
           <li className="relative">
-            <button 
-              onClick={toggleClaimsDropdown} 
-              className="text-white hover:text-gray-300 focus:outline-none"
-            >
+            <button onClick={toggleClaimsDropdown} className="text-white hover:text-gray-300">
               Claims
             </button>
             {isClaimsDropdownOpen && (
@@ -103,8 +88,12 @@ const Navbar = () => {
               </ul>
             )}
           </li>
-          <li><Link to="/contact" className="text-white hover:text-gray-300">Contact</Link></li>
         </ul>
+        <div className="ml-auto">
+          <Link to="/contact" className="text-white hover:text-gray-300">
+            Contact
+          </Link>
+        </div>
         <button className="md:hidden text-white bg-blue-500 p-2 rounded">Menu</button>
       </div>
     </nav>
