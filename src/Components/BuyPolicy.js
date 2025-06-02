@@ -7,7 +7,7 @@ const BuyPolicy = () => {
 
     const handleBuyPolicy = async () => {
         try {
-            const response = await fetch('https://your-api-url.com/buy-policy', {
+            const response = await fetch('https://localhost:7251/api/CustomerPolicies/assign?policy id', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -32,7 +32,7 @@ const RegistrationForm = () => {
     try {
       const response = await axios.post("https://localhost:7251/register", formData);
       console.log(response.data);
-      setMessage(`Success! ${response.data.message}`);
+      setMessage(`Success! Welcome, ${formData.username}!`);
       setFormData({ username: "", email: "", password: "" }); // Reset form correctly
       setErrors({});
     } catch (error) {

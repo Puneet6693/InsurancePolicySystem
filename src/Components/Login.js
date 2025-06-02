@@ -1,9 +1,12 @@
 import React, { useContext, useState } from "react";
 import { StoreContext } from "../services/StoreContext";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Login = ({ setShowLogin }) => {
-  const { login } = useContext(StoreContext); // Use login function from StoreContext
+    const { login } = useContext(StoreContext); // Use login function from StoreContext
+    const navigate = useNavigate(); // Initialize useNavigate
+
   const [data, setData] = useState({
     username: "",
     password: "",
@@ -18,7 +21,9 @@ const Login = ({ setShowLogin }) => {
     e.preventDefault();
     try {
       await login(data.username, data.password); // Use login function
+      navigate("/"); 
       setShowLogin(false); // Close login modal on success
+     // Navigate to homepage on success
     } catch (error) {
       console.error("Login Error:", error);
       toast.error("An error occurred during login."); // Fallback error message

@@ -1,6 +1,8 @@
 import PolicyTab from "./PolicyTab"
 import SliderBanner from "./SliderBanner";
-import CustomerDetails from "./CustomerDetails";
+
+import CustomerGetAll from "./CustomerGetAll";
+import AddCustomerForm from "./AddCustomer";
 
 const Dashboard=()=>{
     return (
@@ -8,7 +10,8 @@ const Dashboard=()=>{
             <SliderBanner />
             <div className="w-full max-w-4xl p-5">
                 <PolicyTab />
-                <CustomerDetails/>
+                <CustomerGetAll/>
+                <AddCustomerForm/>
                 
             </div>
         </div>

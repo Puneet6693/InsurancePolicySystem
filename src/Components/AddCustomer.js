@@ -1,101 +1,116 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { StoreContext } from "../services/StoreContext"; // Import StoreContext for token management
 
-const CustomerForm = () => {
-  const navigate = useNavigate();
-  const [customer, setCustomer] = useState({
-    fullName: "",
-    address: "",
-    phone: ""
-  });
-  const [error, setError] = useState(null);
+const AddCustomer = () => {
+    const { token } = useContext(StoreContext); // Access token from StoreContext
+    const [formData, setFormData] = useState({
+        customer_Name: "",
+        customer_Phone: "",
+        customer_Address: "",
+    });
+    const [errors, setErrors] = useState({});
+    const [formSubmitted, setFormSubmitted] = useState(false); // Track form submission state
+    const [message, setMessage] = useState("");
 
-  // Handle input change
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setCustomer((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+    // Validation function
+    const validate = () => {
+        let tempErrors = {};
+        if (!formData.customer_Name.trim()) tempErrors.customer_Name = "Customer Name is required!";
+        if (!formData.customer_Phone || isNaN(formData.customer_Phone)) tempErrors.customer_Phone = "Valid Phone Number is required!";
+        if (!formData.customer_Address.trim()) tempErrors.customer_Address = "Customer Address is required!";
+        setErrors(tempErrors);
+        return Object.keys(tempErrors).length === 0;
+    };
 
-  // Handle form submission and call API
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await fetch("https://localhost:7251/api/Customers", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // If you're using token authentication, add:
-          // "Authorization": "Bearer <your-token>"
-        },
-        body: JSON.stringify(customer),
-      });
+    // Handle input changes
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.message || "Submission failed!");
-        return;
-      }
-      
-      const data = await response.json();
-      console.log("Customer added:", data);
-      // After adding customer details successfully, navigate to Buy Policy page
-      navigate("/buy-policy");
-    } catch (err) {
-      setError("An error occurred. Please try again.");
-      console.error(err);
-    }
-  };
+    // Handle form submission
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setFormSubmitted(true); // Set form as submitted
+        setMessage(""); // Clear previous messages
+        if (!validate()) return;
 
-  return (
-    <div style={{ maxWidth: "400px", margin: "0 auto", padding: "1rem" }}>
-      <h2>Fill in Your Details</h2>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="fullName">Full Name:</label>
-          <input
-            type="text"
-            id="fullName"
-            name="fullName"
-            value={customer.fullName}
-            onChange={handleChange}
-            required
-            style={{ width: "100%", padding: "0.5rem" }}
-          />
+        try {
+            const response = await fetch("https://localhost:7251/api/Customers", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`, // Include token in Authorization header
+                },
+                body: JSON.stringify(formData),
+            });
+
+            const responseData = await response.text(); // Parse plain text response
+            console.log("Server Response:", responseData);
+
+            if (response.ok) {
+                setMessage("Customer added successfully!");
+                setFormData({
+                    customer_Name: "",
+                    customer_Phone: "",
+                    customer_Address: "",
+                }); // Reset form fields
+                setErrors({});
+            } else {
+                setMessage("Details already exist.");
+            }
+        } catch (error) {
+            console.error("Error submitting customer:", error);
+            setMessage("Something went wrong. Please try again later.");
+        }
+    };
+
+    return (
+        <div className="flex justify-center items-center min-h-screen bg-gray-100">
+            <div className="bg-white p-6 rounded-md shadow-md w-96">
+                <h2 className="text-lg font-bold mb-4 text-center">Add Customer</h2>
+                {message && <p className="text-green-600 text-center">{message}</p>}
+                
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <input
+                        type="text"
+                        name="customer_Name"
+                        placeholder="Customer Name"
+                        className="w-full px-4 py-2 border rounded-md"
+                        onChange={handleChange}
+                        value={formData.customer_Name}
+                        required
+                    />
+                    {errors.customer_Name && <p style={{ color: "red" }}>{errors.customer_Name}</p>}
+
+                    <input
+                        type="number"
+                        name="customer_Phone"
+                        placeholder="Customer Phone"
+                        className="w-full px-4 py-2 border rounded-md"
+                        onChange={handleChange}
+                        value={formData.customer_Phone}
+                        required
+                    />
+                    {errors.customer_Phone && <p style={{ color: "red" }}>{errors.customer_Phone}</p>}
+
+                    <input
+                        type="text"
+                        name="customer_Address"
+                        placeholder="Customer Address"
+                        className="w-full px-4 py-2 border rounded-md"
+                        onChange={handleChange}
+                        value={formData.customer_Address}
+                        required
+                    />
+                    {errors.customer_Address && <p style={{ color: "red" }}>{errors.customer_Address}</p>}
+
+                    <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-md" disabled={formSubmitted}>
+                        Add Customer
+                    </button>
+                </form>
+            </div>
         </div>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="address">Address:</label>
-          <input
-            type="text"
-            id="address"
-            name="address"
-            value={customer.address}
-            onChange={handleChange}
-            required
-            style={{ width: "100%", padding: "0.5rem" }}
-          />
-        </div>
-        <div style={{ marginBottom: "1rem" }}>
-          <label htmlFor="phone">Phone:</label>
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            value={customer.phone}
-            onChange={handleChange}
-            required
-            style={{ width: "100%", padding: "0.5rem" }}
-          />
-        </div>
-        <button type="submit" style={{ padding: "0.5rem 1rem" }}>
-          Submit
-        </button>
-      </form>
-    </div>
-  );
+    );
 };
 
-export default CustomerForm;
+export default AddCustomer;
