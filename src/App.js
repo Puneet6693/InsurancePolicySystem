@@ -11,9 +11,11 @@ import ClaimForm from './Components/Claim';
 import UpdatePolicy from './Components/UpdatePolicy';
 import PolicyTab from './Components/PolicyTab';
 import PolicyDetails from './Components/PolicyById';
+import BuyPolicy from './Components/CustomerPolicies/BuyPolicy'; // Import BuyPolicy component
 import { StoreContextProvider, StoreContext } from './services/StoreContext';
 import DeletePolicy from './Components/DeletePolicy';
 import ClaimsFetch from './Components/GetAllClaims';
+import { ToastContainer } from 'react-toastify';
 
 // Private Route Wrapper
 const PrivateRoute = ({ children }) => {
@@ -25,12 +27,16 @@ function App() {
   return (
     <StoreContextProvider>
       <Router>
+        <ToastContainer/>
         <Navbar />
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Dashboard />} />
           <Route path="/Dashboard" element={<PolicyTab />} />
           <Route path="/policy-details/:id" element={<PolicyDetails />} />
+          <Route 
+            path="/BuyPolicy"  element={<BuyPolicy />}/>
+            
           <Route path="/Registration" element={<RegistrationForm />} />
           <Route path="/Login" element={<Login />} />
 
@@ -83,7 +89,7 @@ function App() {
               </PrivateRoute>
             } 
           />
-
+          
           {/* Fallback Route */}
           <Route path="*" element={<Navigate to="/Login" />} />
         </Routes>

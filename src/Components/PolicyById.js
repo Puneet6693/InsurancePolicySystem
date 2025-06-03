@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import { StoreContext } from "../services/StoreContext";
 
 const PolicyDetails = () => {
     const { axiosInstance } = useContext(StoreContext); // Use axiosInstance from StoreContext
     const { id } = useParams(); // Get policy ID from URL
+    const navigate = useNavigate(); // Initialize useNavigate for navigation
     const [policy, setPolicy] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -28,21 +29,25 @@ const PolicyDetails = () => {
     if (loading) return <p>Loading policy details...</p>;
     if (error) return <p className="text-red-600">{error}</p>;
 
+    const handleBuyPolicy = () => {
+        // Navigate to BuyPolicy component and pass the policy ID as a query parameter
+        navigate(`/BuyPolicy?policyId=${id}`);
+    };
+
     return (
         <div className="p-6 bg-white shadow-md rounded-md">
-        <h2 className="text-2xl font-bold text-blue-600 mb-4">{policy.policy_Name}</h2>
-        <p><strong>Premium Amount:</strong> ${policy.premiumAmount}</p>
-        <p><strong>Coverage Details:</strong> {policy.coverageDetails}</p>
-        <p><strong>Validity Period:</strong> {policy.validityPeriod}</p>
-        {/* <p><strong>Agent ID:</strong> {policy.agent?.agentID}</p>  */}
-        <p><strong>Agent Name:</strong> {policy.agent?.agent_Name}</p> 
-        <button
-            // onClick={handleBuyPolicy}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-        >
-            Buy Policy
-        </button>
-    </div>
+            <h2 className="text-2xl font-bold text-blue-600 mb-4">{policy.policy_Name}</h2>
+            <p><strong>Premium Amount:</strong> ${policy.premiumAmount}</p>
+            <p><strong>Coverage Details:</strong> {policy.coverageDetails}</p>
+            <p><strong>Validity Period:</strong> {policy.validityPeriod}</p>
+            <p><strong>Agent Name:</strong> {policy.agent?.agent_Name}</p>
+            <button
+                onClick={handleBuyPolicy} // Navigate to BuyPolicy component
+                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            >
+                Buy Policy
+            </button>
+        </div>
     );
 };
 
