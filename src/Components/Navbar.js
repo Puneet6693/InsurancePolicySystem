@@ -17,7 +17,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-blue-600 p-4 shadow-md">
+    <nav className="bg-blue-600 p-5 shadow-md fixed top-0 left-0 w-full z-50">
       <div className="container mx-auto flex justify-between items-center">
         <h1 
           className="text-white text-lg font-bold cursor-pointer" 
@@ -68,14 +68,14 @@ const Navbar = () => {
             <button onClick={togglePoliciesDropdown} className="text-white hover:text-gray-300">
               Policies
             </button>
-            {isPoliciesDropdownOpen && (
+            {/* {isPoliciesDropdownOpen && (
               <ul className="absolute bg-white text-black mt-2 rounded shadow-lg z-50 border border-gray-300">
                 <li><Link to="/PolicyFeatch" className="block px-4 py-2 hover:bg-blue-100" onClick={closeDropdowns}>View Policies</Link></li>
                 <li><Link to="/Add_policy" className="block px-4 py-2 hover:bg-blue-100" onClick={closeDropdowns}>Add Policy</Link></li>
                 <li><Link to="/UpdatePolicy" className="block px-4 py-2 hover:bg-blue-100" onClick={closeDropdowns}>Update Policy</Link></li>
                 <li><Link to="/DeletePolicy" className="block px-4 py-2 hover:bg-blue-100" onClick={closeDropdowns}>Remove Policy</Link></li>
               </ul>
-            )}
+            )} */}
           </li>
           <li className="relative">
             <button onClick={toggleClaimsDropdown} className="text-white hover:text-gray-300">
@@ -89,11 +89,18 @@ const Navbar = () => {
             )}
           </li>
         </ul>
-        <div className="ml-auto">
+        {/* <div className="ml-auto">
           <Link to="/contact" className="text-white hover:text-gray-300">
             Contact
           </Link>
-        </div>
+        </div> */}
+        {token ? (
+          <Link to="/Profile" className="text-white hover:text-gray-300">
+            Profile
+          </Link>
+            ) : (
+              <></>
+            )}
         <button className="md:hidden text-white bg-blue-500 p-2 rounded">Menu</button>
       </div>
     </nav>

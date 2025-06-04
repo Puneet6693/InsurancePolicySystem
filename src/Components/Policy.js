@@ -29,3 +29,6 @@ const PolicyCard = ({ policyName, policyPremium, imageUrl, policyId, onViewDetai
 };
 
 export default PolicyCard;
+
+
+

@@ -56,9 +56,11 @@ const BuyPolicy = () => {
                     setPolicyDetails(policyData); // Set policy details
                 } else {
                     console.error('Failed to fetch policy details:', response.statusText);
+                    setMessage('Unable to fetch policy details. Please try again later.');
                 }
             } catch (error) {
                 console.error('Error fetching policy details:', error);
+                setMessage('An error occurred while fetching policy details.');
             }
         };
 
@@ -84,14 +86,15 @@ const BuyPolicy = () => {
             });
 
             if (response.ok) {
-                const data = await response.json();
-                setMessage(`Policy purchased successfully: ${data.message}`);
+                setMessage("Policy purchased successfully!");
             } else {
                 const errorData = await response.json();
-                setMessage(`Failed to purchase policy: ${errorData.message || 'Unknown error'}`);
+                console.error('Failed to purchase policy:', errorData);
+                setMessage('Unable to purchase policy. Please try again later.');
             }
         } catch (error) {
-            setMessage('An error occurred while purchasing the policy.');
+            console.error('Error purchasing policy:', error);
+            setMessage('An unexpected error occurred while purchasing the policy.');
         }
     };
 

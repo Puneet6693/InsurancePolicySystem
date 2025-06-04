@@ -159,7 +159,7 @@
 // };
 
 // export default AddPolicyForm;
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { StoreContext } from "../services/StoreContext"; // Import StoreContext for token management
 
 const AddPolicyForm = () => {
@@ -172,8 +172,35 @@ const AddPolicyForm = () => {
         agentID: "",
     });
 
+    const [agents, setAgents] = useState([]); // State to store agents fetched from API
     const [errors, setErrors] = useState({});
     const [message, setMessage] = useState("");
+
+    // Fetch agents from API
+    useEffect(() => {
+        const fetchAgents = async () => {
+            try {
+                const response = await fetch("https://localhost:7251/api/Agents", {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`, // Include token in Authorization header
+                    },
+                });
+
+                if (response.ok) {
+                    const agentsData = await response.json();
+                    setAgents(agentsData); // Set agents data
+                } else {
+                    console.error("Failed to fetch agents:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Error fetching agents:", error);
+            }
+        };
+
+        fetchAgents();
+    }, [token]);
 
     // Validation function
     const validate = () => {
@@ -182,8 +209,7 @@ const AddPolicyForm = () => {
         if (!formData.premiumAmount || isNaN(formData.premiumAmount)) tempErrors.premiumAmount = "Valid Premium Amount is required!";
         if (!formData.coverageDetails.trim()) tempErrors.coverageDetails = "Coverage Details are required!";
         if (!formData.validityPeriod.trim()) tempErrors.validityPeriod = "Validity Period is required!";
-        
-        if (!String(formData.agentID).trim() || isNaN(formData.agentID)) tempErrors.agentID = "Valid Agent ID is required!";
+        if (!formData.agentID.trim()) tempErrors.agentID = "Agent selection is required!";
 
         setErrors(tempErrors);
         return Object.keys(tempErrors).length === 0;
@@ -204,8 +230,7 @@ const AddPolicyForm = () => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`, 
-                       // Include token in Authorization header    
+                    Authorization: `Bearer ${token}`, // Include token in Authorization header
                 },
                 body: JSON.stringify(formData),
             });
@@ -228,7 +253,7 @@ const AddPolicyForm = () => {
             }
         } catch (error) {
             console.error("Error submitting policy:", error);
-            setMessage("Error adding policy: " + error.message);
+            setMessage("Error adding policy.");
         }
     };
 
@@ -262,15 +287,21 @@ const AddPolicyForm = () => {
                     />
                     {errors.premiumAmount && <p style={{ color: "red" }}>{errors.premiumAmount}</p>}
 
-                    <input
-                        type="text"
+                    <select
                         name="coverageDetails"
-                        placeholder="Coverage Details"
                         className="w-full px-4 py-2 border rounded-md"
                         onChange={handleChange}
                         value={formData.coverageDetails}
                         required
-                    />
+                    >
+                        <option value="">Select Coverage Details</option>
+                        <option value="Quarterly">Quarterly</option>
+                        <option value="Half Yearly">Half Yearly</option>
+                        <option value="Monthly">Monthly</option>
+                        <option value="Yearly">Yearly</option>
+                        <option value="Five Years">Five Years</option>
+                        <option value="Decade">Decade</option>
+                    </select>
                     {errors.coverageDetails && <p style={{ color: "red" }}>{errors.coverageDetails}</p>}
 
                     <input
@@ -284,16 +315,20 @@ const AddPolicyForm = () => {
                     />
                     {errors.validityPeriod && <p style={{ color: "red" }}>{errors.validityPeriod}</p>}
 
-                    <input
-                        type="number"
+                    <select
                         name="agentID"
-                        placeholder="Agent ID"
                         className="w-full px-4 py-2 border rounded-md"
                         onChange={handleChange}
                         value={formData.agentID}
-                        min="1"
                         required
-                    />
+                    >
+                        <option value="">Select Agent</option>
+                        {agents.map((agent) => (
+                            <option key={agent.agentID} value={agent.agentID}>
+                                {agent.agent_Name} (Id: {agent.agentID})
+                            </option>
+                        ))}
+                    </select>
                     {errors.agentID && <p style={{ color: "red" }}>{errors.agentID}</p>}
 
                     <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-md">

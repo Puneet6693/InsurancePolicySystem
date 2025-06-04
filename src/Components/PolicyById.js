@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom"; // Import useNavigate
 import { StoreContext } from "../services/StoreContext";
 
 const PolicyDetails = () => {
-    const { axiosInstance } = useContext(StoreContext); // Use axiosInstance from StoreContext
+    const { axiosInstance, token } = useContext(StoreContext); // Use axiosInstance from StoreContext
     const { id } = useParams(); // Get policy ID from URL
     const navigate = useNavigate(); // Initialize useNavigate for navigation
     const [policy, setPolicy] = useState(null);
@@ -30,8 +30,7 @@ const PolicyDetails = () => {
     if (error) return <p className="text-red-600">{error}</p>;
 
     const handleBuyPolicy = () => {
-        // Navigate to BuyPolicy component and pass the policy ID as a query parameter
-        navigate(`/BuyPolicy?policyId=${id}`);
+        token ? navigate(`/BuyPolicy?policyId=${id}`) : navigate(`/Login?redirect=/BuyPolicy?policyId=${id}`); // Navigate to BuyPolicy component with policy ID
     };
 
     return (
