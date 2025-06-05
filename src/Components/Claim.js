@@ -1,65 +1,131 @@
-import React, { useState } from "react";
-import axios from "axios";
+// 
 
+import axios from "axios";
+import React, { useState, useContext, useEffect } from "react";
+ 
+import { StoreContext } from "../services/StoreContext";
+ 
 const ClaimForm = () => {
+    const { token } = useContext(StoreContext); 
     const [formData, setFormData] = useState({
         policyID: "",
-        customer_ID: "",
-        claimAmount: "",
+        customer_ID: "", // Default to 0 since customer_ID is an integer
+        claimAmount: "", // Default to an empty string
     });
     const [errors, setErrors] = useState({});
     const [message, setMessage] = useState("");
-
+    const [policies, setPolicies] = useState([]); // State to store policies
+ 
+    // Fetch customer details and set customer_ID
+    useEffect(() => {
+        const fetchCustomerDetails = async () => {
+            try {
+                const response = await axios.get(
+                    "https://localhost:7251/api/Customers/GetCustomerById",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+                        },
+                    }
+                );
+                console.log("Fetched Customer Details:", response.data); // Debugging: Log the fetched customer details
+ 
+                // Update the formData state with the fetched customer_ID
+                setFormData((prevFormData) => ({
+                    ...prevFormData,
+                    customer_ID: response.data.customer_ID || 0, // Set customer_ID as an integer
+                }));
+            } catch (error) {
+                setMessage("Error fetching customer details. Please try again.");
+            }
+        };
+ 
+        fetchCustomerDetails();
+    }, [token]); // Dependency array ensures this runs when the token changes
+ 
+    useEffect(() => {
+        // Fetch policies assigned to the customer when customer_ID changes
+        const fetchPolicies = async () => {
+            if (!formData.customer_ID) {
+                setPolicies([]); // Clear policies if customer_ID is empty or undefined
+                return;
+            }
+ 
+            try {
+                const response = await axios.get(
+                    `https://localhost:7251/GetAllPoliciesByCustomerId?id=${formData.customer_ID}`
+                );
+                setPolicies(response.data);
+            } catch (error) {
+                setPolicies([]); // Clear policies on error
+            }
+        };
+ 
+        fetchPolicies();
+    }, [formData.customer_ID]); // Dependency array ensures this runs when customer_ID changes
+ 
     const validate = () => {
         let tempErrors = {};
-        if (!formData.policyID.trim() || isNaN(formData.policyID)) tempErrors.policyID = "Valid Policy ID is required!";
-        if (!formData.customer_ID.trim() || isNaN(formData.customer_ID)) tempErrors.customer_ID = "Valid Customer ID is required!";
+        if (!formData.policyID.trim()) tempErrors.policyID = "Policy selection is required!";
+        if (!formData.customer_ID || isNaN(formData.customer_ID)) tempErrors.customer_ID = "Valid Customer ID is required!";
         if (!formData.claimAmount.trim() || isNaN(formData.claimAmount)) tempErrors.claimAmount = "Valid Claim Amount is required!";
-
+ 
         setErrors(tempErrors);
         return Object.keys(tempErrors).length === 0;
     };
-
+ 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+ 
+        // Update formData
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: value,
+        }));
     };
-
+ 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validate()) return;
-
+ 
         try {
-            const response = await axios.post("https://localhost:7251/api/Claims", formData);
-            console.log(response.data);
-            setMessage("Calaim added successfully!");
+            const response = await axios.post(
+                "https://localhost:7251/api/Claims",
+                formData,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+                    },
+                }
+            );
+ 
+            // Display the success message from the backend
+            setMessage(response.data.message || "Claim added successfully!");
+ 
+            // Reset the form
             setFormData({
                 policyID: "",
-                customer_ID: "",
+                customer_ID: formData.customer_ID, // Keep the customer_ID after form reset
                 claimAmount: "",
-            }); // Reset form
+            });
             setErrors({});
         } catch (error) {
-            setMessage("Error submitting form: " + error.message);
+            // Handle backend error and display the message on the UI
+            if (error.response && error.response.data) {
+                const backendMessage = error.response.data.error || "An error occurred while filing the claim.";
+                setMessage(`Error: ${backendMessage}`);
+            } else {
+                setMessage("An unexpected error occurred. Please try again.");
+            }
         }
     };
-
+ 
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100">
             <div className="bg-white p-6 rounded-md shadow-md w-96">
                 <h2 className="text-lg font-bold mb-4 text-center">File Claim</h2>
-                {message && <p className="text-green-600 text-center">{message}</p>}
+                {message && <p className={`text-center ${message.includes("successfully") ? "text-green-600" : "text-red-600"}`}>{message}</p>}
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    <input
-                        type="number"
-                        name="policyID"
-                        placeholder="Policy ID"
-                        className="w-full px-4 py-2 border rounded-md"
-                        onChange={handleChange}
-                        value={formData.policyID}
-                        required
-                    />
-                    {errors.policyID && <p style={{ color: "red" }}>{errors.policyID}</p>}
-
                     <input
                         type="number"
                         name="customer_ID"
@@ -68,9 +134,27 @@ const ClaimForm = () => {
                         onChange={handleChange}
                         value={formData.customer_ID}
                         required
+                        readOnly // Make the field read-only since it's auto-filled
                     />
                     {errors.customer_ID && <p style={{ color: "red" }}>{errors.customer_ID}</p>}
-
+ 
+                    <select
+                        name="policyID"
+                        className="w-full px-4 py-2 border rounded-md"
+                        onChange={handleChange}
+                        value={formData.policyID}
+                        required
+                        disabled={!policies.length} // Disable dropdown if no policies are available
+                    >
+                        <option value="">Select Policy</option>
+                        {policies.map((policy) => (
+                            <option key={policy.policyID} value={policy.policyID}>
+                                {policy.policy_Name ? `${policy.policy_Name} (ID: ${policy.policyID})` : `Policy ID: ${policy.policyID}`}
+                            </option>
+                        ))}
+                    </select>
+                    {errors.policyID && <p style={{ color: "red" }}>{errors.policyID}</p>}
+ 
                     <input
                         type="number"
                         name="claimAmount"
@@ -81,7 +165,7 @@ const ClaimForm = () => {
                         required
                     />
                     {errors.claimAmount && <p style={{ color: "red" }}>{errors.claimAmount}</p>}
-
+ 
                     <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-md">
                         Add Claim
                     </button>
@@ -90,5 +174,8 @@ const ClaimForm = () => {
         </div>
     );
 };
-
+ 
 export default ClaimForm;
+ 
+
+ 

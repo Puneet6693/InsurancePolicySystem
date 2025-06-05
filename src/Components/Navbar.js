@@ -94,13 +94,25 @@ const Navbar = () => {
             Contact
           </Link>
         </div> */}
+        <div className="hidden md:flex space-x-6">
         {token ? (
-          <Link to="/Profile" className="text-white hover:text-gray-300">
+          <Link to="/UserProfile" className="text-white hover:text-gray-300">
             Profile
+           </Link>
+          
+            ) : (
+              <></>
+              
+            )}
+            {token ? (
+          <Link to="/Notification" className="text-white hover:text-gray-300">
+            Notifications
           </Link>
+          
             ) : (
               <></>
             )}
+            </div>
         <button className="md:hidden text-white bg-blue-500 p-2 rounded">Menu</button>
       </div>
     </nav>

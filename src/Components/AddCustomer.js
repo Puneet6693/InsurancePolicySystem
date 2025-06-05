@@ -67,7 +67,7 @@ const AddCustomer = () => {
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100">
             <div className="bg-white p-6 rounded-md shadow-md w-96">
-                <h2 className="text-lg font-bold mb-4 text-center">Add Customer</h2>
+                <h2 className="text-lg font-bold mb-4 text-center">Enter Customer Details</h2>
                 {message && <p className="text-green-600 text-center">{message}</p>}
                 
                 <form onSubmit={handleSubmit} className="space-y-4">

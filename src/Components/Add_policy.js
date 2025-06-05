@@ -1,164 +1,4 @@
 
-// import React, { useState, useContext } from "react";
-// import { StoreContext } from "../services/StoreContext";
-
-// const AddPolicyForm = () => {
-//     const { axiosInstance } = useContext(StoreContext); // Use axiosInstance from StoreContext
-//     const [formData, setFormData] = useState({
-//         policy_Name: "",
-//         premiumAmount: "",
-//         coverageDetails: "",
-//         validityPeriod: "",
-//         agentID: "",
-//     });
-//     const [errors, setErrors] = useState({});
-//     const [message, setMessage] = useState("");
-
-//     const validate = () => {
-//         let tempErrors = {};
-//         const policyNameRegex = /^[a-zA-Z0-9\s]{3,50}$/; // Alphanumeric, 3-50 characters
-
-//         if (!formData.policy_Name.trim()) {
-//             tempErrors.policy_Name = "Policy Name is required!";
-//         } else if (!policyNameRegex.test(formData.policy_Name)) {
-//             tempErrors.policy_Name = "Policy Name must be alphanumeric and 3-50 characters long!";
-//         }
-
-//         if (!formData.premiumAmount.trim() || isNaN(formData.premiumAmount) || Number(formData.premiumAmount) <= 0) {
-//             tempErrors.premiumAmount = "Premium Amount must be a positive number!";
-//         }
-
-//         if (!formData.coverageDetails.trim()) {
-//             tempErrors.coverageDetails = "Coverage Details are required!";
-//         }
-
-//         if (!formData.validityPeriod.trim()) {
-//             tempErrors.validityPeriod = "Validity Period is required!";
-//         }
-
-//         if (!formData.agentID.trim() || isNaN(formData.agentID) || Number(formData.agentID) <= 0) {
-//             tempErrors.agentID = "Agent ID must be a positive number!";
-//         }
-
-//         setErrors(tempErrors);
-//         return Object.keys(tempErrors).length === 0;
-//     };
-
-//     const handleChange = (e) => {
-//         const { name, value } = e.target;
-//         setFormData({ ...formData, [name]: value });
-    
-//         if (name === "validityStart" || name === "validityEnd") {
-//             if (formData.validityStart && formData.validityEnd) {
-//                 setFormData((prevData) => ({
-//                     ...prevData,
-//                     validityPeriod: `${prevData.validityStart} to ${prevData.validityEnd}`,
-//                 }));
-//             }
-//         }
-//     };
-    
-
-//     const handleSubmit = async (e) => {
-//         e.preventDefault();
-//         if (!validate()) return;
-
-//         try {
-//             const response = await axiosInstance.post("/api/Policies", formData);
-//         // Use axiosInstance
-//             console.log(response.data);
-//             setMessage(`Success! ${response.data.message}`);
-//             setFormData({
-//                 policy_Name: "",
-//                 premiumAmount: "",
-//                 coverageDetails: "",
-//                 validityPeriod: "",
-//                 agentID: "",
-//             }); // Reset form
-//             setErrors({});
-//         } catch (error) {
-//             console.error("Error submitting form:", error);
-//             if (error.response?.data?.message) {
-//                 setMessage("Error: " + error.response.data.message);
-//             } else {
-//                 setMessage("Error submitting form: " + error.message);
-//             }
-//         }
-//     };
-
-//     return (
-//         <div className="flex justify-center items-center min-h-screen bg-gray-100">
-//             <div className="bg-white p-6 rounded-md shadow-md w-96">
-//                 <h2 className="text-lg font-bold mb-4 text-center">Add Policy</h2>
-//                 {message && <p className="text-green-600 text-center">{message}</p>}
-//                 <form onSubmit={handleSubmit} className="space-y-4">
-//                     <input
-//                         type="text"
-//                         name="policy_Name"
-//                         placeholder="Policy Name"
-//                         className="w-full px-4 py-2 border rounded-md"
-//                         onChange={handleChange}
-//                         value={formData.policy_Name}
-//                         required
-//                     />
-//                     {errors.policy_Name && <p style={{ color: "red" }}>{errors.policy_Name}</p>}
-
-//                     <input
-//                         type="number"
-//                         name="premiumAmount"
-//                         placeholder="Premium Amount"
-//                         className="w-full px-4 py-2 border rounded-md"
-//                         onChange={handleChange}
-//                         value={formData.premiumAmount}
-//                         min="1" // Prevent negative values
-//                         required
-//                     />
-//                     {errors.premiumAmount && <p style={{ color: "red" }}>{errors.premiumAmount}</p>}
-
-//                     <input
-//                         type="text"
-//                         name="coverageDetails"
-//                         placeholder="Coverage Details"
-//                         className="w-full px-4 py-2 border rounded-md"
-//                         onChange={handleChange}
-//                         value={formData.coverageDetails}
-//                         required
-//                     />
-//                     {errors.coverageDetails && <p style={{ color: "red" }}>{errors.coverageDetails}</p>}
-
-//                     <input
-//                         type="date"
-//                         name="validityPeriod"
-//                         placeholder="Validity Period"
-//                         className="w-full px-4 py-2 border rounded-md"
-//                         onChange={handleChange}
-//                         value={formData.validityPeriod}
-//                         required
-//                     />
-//                     {errors.validityPeriod && <p style={{ color: "red" }}>{errors.validityPeriod}</p>}
-
-//                     <input
-//                         type="number"
-//                         name="agentID"
-//                         placeholder="Agent ID"
-//                         className="w-full px-4 py-2 border rounded-md"
-//                         onChange={handleChange}
-//                         value={formData.agentID}
-//                         min="1" // Prevent negative values
-//                         required
-//                     />
-//                     {errors.agentID && <p style={{ color: "red" }}>{errors.agentID}</p>}
-
-//                     <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-md">
-//                         Add Policy
-//                     </button>
-//                 </form>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default AddPolicyForm;
 import React, { useState, useContext, useEffect } from "react";
 import { StoreContext } from "../services/StoreContext"; // Import StoreContext for token management
 
@@ -203,27 +43,115 @@ const AddPolicyForm = () => {
     }, [token]);
 
     // Validation function
-    const validate = () => {
+    const validate = (data = formData) => {
         let tempErrors = {};
-        if (!formData.policy_Name.trim()) tempErrors.policy_Name = "Policy Name is required!";
-        if (!formData.premiumAmount || isNaN(formData.premiumAmount)) tempErrors.premiumAmount = "Valid Premium Amount is required!";
-        if (!formData.coverageDetails.trim()) tempErrors.coverageDetails = "Coverage Details are required!";
-        if (!formData.validityPeriod.trim()) tempErrors.validityPeriod = "Validity Period is required!";
-        if (!formData.agentID.trim()) tempErrors.agentID = "Agent selection is required!";
 
-        setErrors(tempErrors);
-        return Object.keys(tempErrors).length === 0;
+        // Validate Policy Name
+        if (!data.policy_Name.trim()) {
+            tempErrors.policy_Name = "Policy Name is required!";
+        } else if (!/^[A-Za-z]/.test(data.policy_Name)) {
+            tempErrors.policy_Name = "Policy Name must start with a letter!";
+        } else if (data.policy_Name.trim().length < 3) {
+            tempErrors.policy_Name = "Policy Name must have at least 3 characters!";
+        }
+
+        // Validate Premium Amount
+        if (!data.premiumAmount || isNaN(data.premiumAmount)) {
+            tempErrors.premiumAmount = "Valid Premium Amount is required!";
+        } else if (data.premiumAmount < 500) {
+            tempErrors.premiumAmount = "Premium Amount must be at least 500!";
+        }
+
+        // Validate Coverage Details
+        if (!data.coverageDetails.trim()) {
+            tempErrors.coverageDetails = "Coverage Details are required!";
+        }
+
+        // Validate Validity Period
+        if (!data.validityPeriod.trim()) {
+            tempErrors.validityPeriod = "Validity Period is required!";
+        } else if (new Date(data.validityPeriod) < new Date()) {
+            tempErrors.validityPeriod = "Validity Period cannot be in the past!";
+        }
+
+        // Validate Agent ID
+        if (!String(data.agentID).trim() || isNaN(data.agentID)) {
+            tempErrors.agentID = "Valid Agent ID is required!";
+        }
+
+        return tempErrors;
     };
 
     // Handle input changes
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+
+        // Validate only the field being updated
+        const tempErrors = { ...errors };
+
+        switch (name) {
+            case "policy_Name":
+                if (!value.trim()) {
+                    tempErrors.policy_Name = "Policy Name is required!";
+                } else if (!/^[A-Za-z]/.test(value)) {
+                    tempErrors.policy_Name = "Policy Name must start with a letter!";
+                } else if (value.trim().length < 3) {
+                    tempErrors.policy_Name = "Policy Name must have at least 3 characters!";
+                } else {
+                    delete tempErrors.policy_Name; // Remove error if valid
+                }
+                break;
+
+            case "premiumAmount":
+                if (!value || isNaN(value)) {
+                    tempErrors.premiumAmount = "Valid Premium Amount is required!";
+                } else if (value < 500) {
+                    tempErrors.premiumAmount = "Premium Amount must be at least 500!";
+                } else {
+                    delete tempErrors.premiumAmount; // Remove error if valid
+                }
+                break;
+
+            case "coverageDetails":
+                if (!value.trim()) {
+                    tempErrors.coverageDetails = "Coverage Details are required!";
+                } else {
+                    delete tempErrors.coverageDetails; // Remove error if valid
+                }
+                break;
+
+            case "validityPeriod":
+                if (!value.trim()) {
+                    tempErrors.validityPeriod = "Validity Period is required!";
+                } else if (new Date(value) < new Date()) {
+                    tempErrors.validityPeriod = "Validity Period cannot be in the past!";
+                } else {
+                    delete tempErrors.validityPeriod; // Remove error if valid
+                }
+                break;
+
+            case "agentID":
+                if (!String(value).trim() || isNaN(value)) {
+                    tempErrors.agentID = "Valid Agent ID is required!";
+                } else {
+                    delete tempErrors.agentID; // Remove error if valid
+                }
+                break;
+
+            default:
+                break;
+        }
+
+        setErrors(tempErrors);
     };
 
     // Handle form submission with fetch API
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!validate()) return;
+        const tempErrors = validate();
+        setErrors(tempErrors);
+        if (Object.keys(tempErrors).length > 0) return;
 
         try {
             const response = await fetch("https://localhost:7251/api/Policies", {
@@ -253,7 +181,7 @@ const AddPolicyForm = () => {
             }
         } catch (error) {
             console.error("Error submitting policy:", error);
-            setMessage("Error adding policy.");
+            setMessage("Error adding policy: " + error.message);
         }
     };
 
@@ -262,7 +190,7 @@ const AddPolicyForm = () => {
             <div className="bg-white p-6 rounded-md shadow-md w-96">
                 <h2 className="text-lg font-bold mb-4 text-center">Add Policy</h2>
                 {message && <p className="text-green-600 text-center">{message}</p>}
-                
+
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <input
                         type="text"
@@ -294,13 +222,12 @@ const AddPolicyForm = () => {
                         value={formData.coverageDetails}
                         required
                     >
-                        <option value="">Select Coverage Details</option>
-                        <option value="Quarterly">Quarterly</option>
-                        <option value="Half Yearly">Half Yearly</option>
-                        <option value="Monthly">Monthly</option>
+                        <option value="" disabled>Select Coverage Details</option>
                         <option value="Yearly">Yearly</option>
-                        <option value="Five Years">Five Years</option>
-                        <option value="Decade">Decade</option>
+                        <option value="Quarterly">Quarterly</option>
+                        <option value="Half-Yearly">Half-Yearly</option>
+                        <option value="5 Year">Half-Yearly</option>
+                        <option value="10 Year">10 Year</option>
                     </select>
                     {errors.coverageDetails && <p style={{ color: "red" }}>{errors.coverageDetails}</p>}
 
@@ -311,6 +238,7 @@ const AddPolicyForm = () => {
                         className="w-full px-4 py-2 border rounded-md"
                         onChange={handleChange}
                         value={formData.validityPeriod}
+                        min={new Date().toISOString().split("T")[0]} // Set minimum date to today's date
                         required
                     />
                     {errors.validityPeriod && <p style={{ color: "red" }}>{errors.validityPeriod}</p>}
