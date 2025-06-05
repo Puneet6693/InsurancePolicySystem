@@ -83,7 +83,7 @@ const Navbar = () => {
             </button>
             {isClaimsDropdownOpen && (
               <ul className="absolute bg-white text-black mt-2 rounded shadow-lg z-50 border border-gray-300">
-                <li><Link to="/GetAllClaims" className="block px-4 py-2 hover:bg-blue-100" onClick={closeDropdowns}>Get All Claims</Link></li>
+                
                 <li><Link to="/Claim" className="block px-4 py-2 hover:bg-blue-100" onClick={closeDropdowns}>Add Claim</Link></li>
               </ul>
             )}

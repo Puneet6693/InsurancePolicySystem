@@ -27,6 +27,9 @@ import CustomerGetAll from './Components/CustomerGetAll'; // Assuming this is wh
 
 // Import StoreContext
 import { StoreContext } from './services/StoreContext';
+import AgentFeatch from './Components/Agent/AgentFeatch';
+import DeleteAgent from './Components/Agent/DeleteAgent';
+import RegisterAgent from './Components/Agent/RegisterAgent';
 
 // Private Route Wrapper (checks for token presence)
 const PrivateRoute = ({ children }) => {
@@ -127,6 +130,9 @@ const AppRoutes = () => {
           <Route path="delete-policy" element={<DeletePolicy />} /> {/* /admin/delete-policy */}
           <Route path="claims" element={<ClaimsFetch />} /> {/* /admin/claims */}
           <Route path="customers" element={<CustomerGetAll />} /> {/* /admin/customers */}
+          <Route path="agents" element={<AgentFeatch />} /> {/* /admin/Agents */}
+          <Route path="delete-agent" element={<DeleteAgent />} /> {/* /admin/delete-agent */}
+          <Route path="register-agent" element={<RegisterAgent />} /> {/* /admin/register-agent */}
           {/* Add other admin routes here if they are nested under /admin */}
         </Route>
 

@@ -2,6 +2,7 @@ import React, { useContext, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { StoreContext } from "../../services/StoreContext";
 import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/24/solid'; // Import arrow icons
+ // Import AgentFeatch for agent data
 
 const AdminNavbar = () => {
     const { logout } = useContext(StoreContext);
@@ -154,15 +155,6 @@ const AdminNavbar = () => {
                                         View Claims
                                     </Link>
                                 </li>
-                                <li>
-                                    <Link
-                                        to="/admin/add-claim"
-                                        className="block px-5 py-2 hover:bg-yellow-100 rounded-b-lg transition-colors duration-200"
-                                        onClick={closeAllDropdowns}
-                                    >
-                                        Add Claim
-                                    </Link>
-                                </li>
                             </ul>
                         )}
                     </li>
@@ -192,15 +184,6 @@ const AdminNavbar = () => {
                                         onClick={closeAllDropdowns}
                                     >
                                         View Customers
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
-                                        to="/admin/add-customer"
-                                        className="block px-5 py-2 hover:bg-yellow-100 rounded-b-lg transition-colors duration-200"
-                                        onClick={closeAllDropdowns}
-                                    >
-                                        Add Customer
                                     </Link>
                                 </li>
                             </ul>
@@ -236,11 +219,20 @@ const AdminNavbar = () => {
                                 </li>
                                 <li>
                                     <Link
-                                        to="/admin/add-agent"
+                                        to="/admin/register-agent"
                                         className="block px-5 py-2 hover:bg-yellow-100 rounded-b-lg transition-colors duration-200"
                                         onClick={closeAllDropdowns}
                                     >
-                                        Add Agent
+                                        Register New Agent
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link
+                                        to="/admin/delete-agent"
+                                        className="block px-5 py-2 hover:bg-yellow-100 rounded-b-lg transition-colors duration-200"
+                                        onClick={closeAllDropdowns}
+                                    >
+                                        Delete Agent
                                     </Link>
                                 </li>
                             </ul>

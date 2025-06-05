@@ -200,12 +200,7 @@ const Login = () => {
                         className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                 </div>
-                <div className="mb-4 flex items-center">
-                    <input type="checkbox" id="terms" className="mr-2" required />
-                    <label htmlFor="terms" className="text-gray-600 text-sm">
-                        By continuing, I agree to the Terms of Use &amp; Privacy Policy.
-                    </label>
-                </div>
+                
                 <button
                     type="submit"
                     className="w-full bg-blue-600 text-white font-semibold py-3 rounded hover:bg-blue-700 transition-colors"
