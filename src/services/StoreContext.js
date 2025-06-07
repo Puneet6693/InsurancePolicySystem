@@ -197,9 +197,9 @@ export const StoreContextProvider = ({ children }) => {
         console.error("Login Error:", error);
         // More specific error messages from backend might be in error.response.data
         if (error.response && error.response.data && error.response.data.message) {
-          toast.error(error.response.data.message);
+          console.log(error.response.data.message);
         } else {
-          toast.error("An error occurred during login.");
+          console.log("An error occurred during login.");
         }
         return null;
     }

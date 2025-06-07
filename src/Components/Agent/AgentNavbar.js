@@ -28,7 +28,7 @@ const AgentNavbar = () => {
                         hover:text-yellow-200 transition duration-300 transform hover:scale-105 // Hover effect
                         tracking-wide
                     ">
-                    Agent Connect
+                    Agent Panel
                 </Link>
 
                 {/* Navigation Links */}
@@ -41,33 +41,6 @@ const AgentNavbar = () => {
                             relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-yellow-400 after:transition-all after:duration-300 hover:after:w-full
                         ">
                         Dashboard
-                    </Link>
-                    <Link 
-                        to="/agent/customers" 
-                        className="
-                            text-white text-lg font-semibold
-                            hover:text-yellow-300 transition duration-300 ease-in-out
-                            relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-yellow-400 after:transition-all after:duration-300 hover:after:w-full
-                        ">
-                        Customers
-                    </Link>
-                    <Link 
-                        to="/agent/policies" 
-                        className="
-                            text-white text-lg font-semibold
-                            hover:text-yellow-300 transition duration-300 ease-in-out
-                            relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-yellow-400 after:transition-all after:duration-300 hover:after:w-full
-                        ">
-                        Policies
-                    </Link>
-                    <Link 
-                        to="/agent/claims" 
-                        className="
-                            text-white text-lg font-semibold
-                            hover:text-yellow-300 transition duration-300 ease-in-out
-                            relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-yellow-400 after:transition-all after:duration-300 hover:after:w-full
-                        ">
-                        Claims
                     </Link>
 
                     {/* Display Agent Username */}

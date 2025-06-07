@@ -110,6 +110,7 @@ export const Datafetch = () => {
                         <tr>
                             <th className="px-6 py-3 text-left font-semibold">Policy ID</th>
                             <th className="px-6 py-3 text-left font-semibold">Policy Name</th>
+                            <th className='px-6 py-3 text-left font-semibold'>Issued Value</th>
                             <th className="px-6 py-3 text-left font-semibold">Premium Amount</th>
                             <th className="px-6 py-3 text-left font-semibold">Coverage Details</th>
                             <th className="px-6 py-3 text-left font-semibold">Validity Period</th>
@@ -123,6 +124,7 @@ export const Datafetch = () => {
                                 <tr key={policy.policyID} className="hover:bg-gray-100">
                                     <td className="border px-6 py-3">{policy.policyID}</td>
                                     <td className="border px-6 py-3">{policy.policy_Name}</td>
+                                    <td className='border px-6 py-3'>{policy.issuredValue}</td>
                                     <td className="border px-6 py-3">{policy.premiumAmount}</td>
                                     <td className="border px-6 py-3">{policy.coverageDetails}</td>
                                     <td className="border px-6 py-3">{policy.validityPeriod}</td>

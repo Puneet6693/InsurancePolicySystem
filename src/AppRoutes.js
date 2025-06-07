@@ -160,9 +160,10 @@ import React, { useContext } from 'react';
 import { Route, Routes, Navigate, useLocation, Outlet } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
 
-// Import all your components
+// Import all your components 
 import UserDashboardFooter from "./Components/UserDashboardFooter";
 import Navbar from './Components/Navbar'; // User Navbar
+import ClaimList from './Components/ClaimList'; // Assuming this is the component for listing claims
 import AdminNavbar from './Components/Admin/AdminNavbar'; // Admin Navbar
 import PolicyFeatch from './Components/PolicyFeatch';
 import Dashboard from './Components/Dashboard';
@@ -185,6 +186,7 @@ import RegisterAgent from './Components/Agent/RegisterAgent';
 import AgentDashboard from './Components/Agent/AgentDashboard'; // <--- NEW: Import AgentDashboard
 import AgentNavbar from './Components/Agent/AgentNavbar'; // <--- NEW: Assuming you'll have an AgentNavbar
 import UserProfile from './Components/CustomerPolicies/UserProfile';
+import CustomerByPolicyID from './Components/Agent/CustomerByPolicyID'; // Assuming this is the component to fetch customers by policy ID
 
 // Import StoreContext
 import { StoreContext } from './services/StoreContext';
@@ -284,6 +286,14 @@ const AppRoutes = () => {
               </PrivateRoute>
             }
           />
+          <Route
+            path="/ClaimList"
+            element={
+              <PrivateRoute>
+                <ClaimList />
+              </PrivateRoute>
+            }
+          />
 
           {/* Admin Routes */}
           <Route
@@ -316,6 +326,7 @@ const AppRoutes = () => {
               </RoleBasedRoute>
             }
           >
+            <Route path="policy-to-customer" element={<CustomerByPolicyID />} />
             <Route index element={<AgentDashboard />} /> {/* /agent */}
             <Route path="dashboard" element={<AgentDashboard />} /> {/* /agent/dashboard */}
             {/* Add other agent-specific nested routes here */}

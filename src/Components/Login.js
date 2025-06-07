@@ -271,10 +271,11 @@ const Login = () => {
         } catch (error) {
             console.error("Login Error:", error);
             if (error.response && error.response.data && error.response.data.message) {
-                toast.error(error.response.data.message);
+                console.log("Error response data:", error.response.data);
             } else {
-                toast.error("An unexpected error occurred during login.");
+                console.log("An unexpected error occurred during login.");
             }
+            toast.error("An unexpected error occurred during login.");
             setIsToastShown(true);
         } finally {
             setTimeout(() => setIsToastShown(false), 3000);

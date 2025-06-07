@@ -1,9 +1,12 @@
-
-
-import React, { useState } from "react";
+import { useState, useContext, useEffect } from "react";
+import { StoreContext } from "../../services/StoreContext";
 import axios from "axios";
+import AssignedPolicy from "./AssignedPolicy"; // Import AssignedPolicy component
 
 const AgentDashboard = () => {
+    const { token } = useContext(StoreContext); // Access token from StoreContext
+    const [isProfileComplete, setIsProfileComplete] = useState(false);
+    const [loading, setLoading] = useState(true);    
     const [formData, setFormData] = useState({
         name: "",
         phone: "",
@@ -22,13 +25,16 @@ const AgentDashboard = () => {
         setMessage("");
 
         try {
-            const token = localStorage.getItem("token"); // Retrieve token from localStorage
+
             const response = await axios.post(
                 "https://localhost:7251/api/Agents",
-                formData,
+                {
+                    agent_Name: formData.name,
+                    contactInfo: formData.phone,
+                },
                 {
                     headers: {
-                        Authorization: `Bearer ${token}`, // Include token in Authorization header
+                        Authorization: `Bearer ${token}`, // Use token from StoreContext
                         "Content-Type": "application/json",
                     },
                 }
@@ -37,6 +43,7 @@ const AgentDashboard = () => {
             if (response.status === 201) {
                 setMessage("Agent added successfully!");
                 setFormData({ name: "", phone: "" }); // Reset form
+                setIsProfileComplete(true); // Update profile status
             } else {
                 setMessage("Failed to add agent. Please try again.");
             }
@@ -46,10 +53,42 @@ const AgentDashboard = () => {
         } finally {
             setIsSubmitting(false);
         }
-    };
+    }; 
 
-    return (
-        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    useEffect(() => {
+      const checkProfileStatus = async () => {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await fetch("https://localhost:7251/IsAgentProfileComplete", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          const isComplete = await response.json();
+          // console.log("Profile status:", isComplete);
+          setIsProfileComplete(isComplete);
+        } catch (error) {
+          console.error("Error checking profile status:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+    
+      checkProfileStatus();
+    }, []);
+
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <p className="text-xl font-semibold text-gray-700">Loading...</p>
+            </div>
+        );
+    }
+
+    if (!isProfileComplete && token) {
+        return (
+            <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <div className="bg-white p-6 rounded-md shadow-md w-full max-w-md">
                 <h2 className="text-2xl font-bold text-center mb-6">Add Agent</h2>
                 {message && (
@@ -110,7 +149,12 @@ const AgentDashboard = () => {
                 </form>
             </div>
         </div>
-    );
-};
+        );
+    }
+
+  return (
+    <AssignedPolicy />
+  );
+}
 
 export default AgentDashboard;

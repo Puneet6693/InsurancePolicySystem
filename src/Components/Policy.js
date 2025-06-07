@@ -15,7 +15,7 @@ const PolicyCard = ({ policyName, policyPremium, imageUrl, policyId, onViewDetai
       <div className="p-3">
         <h2 className="text-md font-bold text-blue-600">{policyName || "Unknown Policy"}</h2>
         <p className="text-gray-700 mt-1 text-xs">
-          Premium: <span className="font-semibold text-gray-900">${policyPremium || "N/A"}</span>
+        Premium: <span className="font-semibold text-gray-900"> ₹ {policyPremium ? new Intl.NumberFormat('en-IN').format(policyPremium) : "N/A"}</span>
         </p>
         <button
           className="mt-2 bg-blue-600 text-white px-2 py-1 rounded-md text-xs hover:bg-blue-700"

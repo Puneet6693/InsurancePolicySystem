@@ -25,6 +25,7 @@ import { useState, useEffect , useContext} from "react";
 import { StoreContext } from "../services/StoreContext";
 import AddCustomer from "./AddCustomer";
 
+
 const Dashboard = () => {  const { token } = useContext(StoreContext);
   const [isProfileComplete, setIsProfileComplete] = useState(false);
 const [loading, setLoading] = useState(true);
@@ -69,6 +70,7 @@ useEffect(() => {
           Explore Our Policies
         </h2>
         <PolicyTab />
+        
       </div>
     </div>
   );

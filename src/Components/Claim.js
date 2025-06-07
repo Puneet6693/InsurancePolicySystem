@@ -11,6 +11,7 @@ const ClaimForm = () => {
         policyID: "",
         customer_ID: "", // Default to 0 since customer_ID is an integer
         claimAmount: "", // Default to an empty string
+        claimReason: "",
     });
     const [errors, setErrors] = useState({});
     const [message, setMessage] = useState("");
@@ -50,40 +51,45 @@ const ClaimForm = () => {
                 setPolicies([]); // Clear policies if customer_ID is empty or undefined
                 return;
             }
- 
+
             try {
                 const response = await axios.get(
-                    `https://localhost:7251/GetAllPoliciesByCustomerId?id=${formData.customer_ID}`
+                    `https://localhost:7251/GetAllPoliciesByCustomerId?id=${formData.customer_ID}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+                        },
+                    }
                 );
                 setPolicies(response.data);
             } catch (error) {
                 setPolicies([]); // Clear policies on error
             }
         };
- 
+
         fetchPolicies();
-    }, [formData.customer_ID]); // Dependency array ensures this runs when customer_ID changes
- 
+    }, [formData.customer_ID, token]); // Dependency array ensures this runs when customer_ID or token changes
+
     const validate = () => {
         let tempErrors = {};
         if (!formData.policyID.trim()) tempErrors.policyID = "Policy selection is required!";
         if (!formData.customer_ID || isNaN(formData.customer_ID)) tempErrors.customer_ID = "Valid Customer ID is required!";
         if (!formData.claimAmount.trim() || isNaN(formData.claimAmount)) tempErrors.claimAmount = "Valid Claim Amount is required!";
- 
+        if (!formData.claimReason.trim()) tempErrors.claimReason = "Claim Reason is required!";
+
         setErrors(tempErrors);
         return Object.keys(tempErrors).length === 0;
     };
- 
+
     const handleChange = (e) => {
         const { name, value } = e.target;
- 
+
         // Update formData
         setFormData((prevFormData) => ({
             ...prevFormData,
             [name]: value,
         }));
     };
- 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validate()) return;
@@ -133,6 +139,7 @@ const ClaimForm = () => {
                         className="w-full px-4 py-2 border rounded-md"
                         onChange={handleChange}
                         value={formData.customer_ID}
+                        hidden
                         required
                         readOnly // Make the field read-only since it's auto-filled
                     />
@@ -165,7 +172,18 @@ const ClaimForm = () => {
                         required
                     />
                     {errors.claimAmount && <p style={{ color: "red" }}>{errors.claimAmount}</p>}
- 
+                        
+                    <textarea
+                        name="claimReason"
+                        placeholder="Claim Reason"
+                        className="w-full px-4 py-2 border rounded-md"
+                        onChange={handleChange}
+                        value={formData.claimReason}
+                        required
+                        rows="4"
+                    ></textarea>
+                    {errors.claimReason && <p style={{ color: "red" }}>{errors.claimReason}</p>}
+
                     <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-md">
                         Add Claim
                     </button>

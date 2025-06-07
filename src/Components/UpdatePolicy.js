@@ -1,3 +1,5 @@
+// 
+
 import React, { useState, useContext } from "react";
 import { StoreContext } from "../services/StoreContext"; // Import StoreContext for token management
 
@@ -6,6 +8,7 @@ const UpdatePolicy = () => {
     const [policyId, setPolicyId] = useState(""); // Allow manual input for policy ID
     const [formData, setFormData] = useState({
         policy_Name: "",
+        issuredValue: "",
         premiumAmount: "",
         coverageDetails: "",
         validityPeriod: "",
@@ -46,19 +49,18 @@ const UpdatePolicy = () => {
 
     const validate = () => {
         let tempErrors = {};
-    
+
         if (!formData.policy_Name.trim()) tempErrors.policy_Name = "Policy Name is required!";
+        if (!formData.issuredValue || isNaN(formData.issuredValue)) tempErrors.issuredValue = "Valid Issured Value is required!";
         if (!formData.premiumAmount || isNaN(formData.premiumAmount)) tempErrors.premiumAmount = "Valid Premium Amount is required!";
         if (!formData.coverageDetails.trim()) tempErrors.coverageDetails = "Coverage Details are required!";
         if (!formData.validityPeriod.trim()) tempErrors.validityPeriod = "Validity Period is required!";
-        
-        // Convert agentID to string before trimming
         if (!String(formData.agentID).trim() || isNaN(formData.agentID)) tempErrors.agentID = "Valid Agent ID is required!";
-    
+
         setErrors(tempErrors);
         return Object.keys(tempErrors).length === 0;
     };
-    
+
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -93,7 +95,7 @@ const UpdatePolicy = () => {
 
     return (
         <div className="flex flex-col justify-center items-center min-h-screen bg-gray-100">
-            <div className="bg-white p-6 rounded-md shadow-md w-96">
+            <div className="bg-white p-6 rounded-md shadow-md w-2/3"> {/* Increased width */}
                 <h2 className="text-lg font-bold mb-4 text-center">Update Policy</h2>
                 {message && <p className="text-green-600 text-center">{message}</p>}
                 
@@ -127,6 +129,17 @@ const UpdatePolicy = () => {
 
                     <input
                         type="number"
+                        name="issuredValue"
+                        placeholder="Issured Value"
+                        className="w-full px-4 py-2 border rounded-md"
+                        onChange={handleChange}
+                        value={formData.issuredValue}
+                        required
+                    />
+                    {errors.issuredValue && <p style={{ color: "red" }}>{errors.issuredValue}</p>}
+
+                    <input
+                        type="number"
                         name="premiumAmount"
                         placeholder="Premium Amount"
                         className="w-full px-4 py-2 border rounded-md"
@@ -136,26 +149,30 @@ const UpdatePolicy = () => {
                     />
                     {errors.premiumAmount && <p style={{ color: "red" }}>{errors.premiumAmount}</p>}
 
-                    <input
-                        type="text"
+                    <textarea
                         name="coverageDetails"
-                        placeholder="Coverage Details"
+                        placeholder="Enter the coverage details of the policy"
                         className="w-full px-4 py-2 border rounded-md"
                         onChange={handleChange}
                         value={formData.coverageDetails}
+                        rows="5"
                         required
                     />
                     {errors.coverageDetails && <p style={{ color: "red" }}>{errors.coverageDetails}</p>}
 
-                    <input
-                        type="date"
+                    <select
                         name="validityPeriod"
-                        placeholder="Validity Period"
                         className="w-full px-4 py-2 border rounded-md"
                         onChange={handleChange}
                         value={formData.validityPeriod}
                         required
-                    />
+                    >
+                        <option value="" disabled>Select Validity Period</option>
+                        <option value="1 Year Cover">1 Year Cover</option>
+                        <option value="2 Year Cover">2 Year Cover</option>
+                        <option value="5 Year Cover">5 Year Cover</option>
+                        <option value="10 Year Cover">10 Year Cover</option>
+                    </select>
                     {errors.validityPeriod && <p style={{ color: "red" }}>{errors.validityPeriod}</p>}
 
                     <input

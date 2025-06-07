@@ -36,10 +36,12 @@ const PolicyDetails = () => {
     return (
         <div className="p-6 bg-white shadow-md rounded-md">
             <h2 className="text-2xl font-bold text-blue-600 mb-4">{policy.policy_Name}</h2>
-            <p><strong>Premium Amount:</strong> ${policy.premiumAmount}</p>
+            <p><strong>Insured Value (IDV):</strong> ₹  {new Intl.NumberFormat('en-IN').format(policy.issuredValue)}</p> {/* Added comma formatting */}
+            <p><strong>Premium Amount:</strong> ₹  {new Intl.NumberFormat('en-IN').format(policy.premiumAmount)}</p> {/* Added comma formatting */}
             <p><strong>Coverage Details:</strong> {policy.coverageDetails}</p>
             <p><strong>Validity Period:</strong> {policy.validityPeriod}</p>
-            <p><strong>Agent Name:</strong> {policy.agent?.agent_Name}</p>
+    
+            {/* <p><strong>Agent Name:</strong> {policy.agent?.agent_Name}</p> */}
             <button
                 onClick={handleBuyPolicy} // Navigate to BuyPolicy component
                 className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"

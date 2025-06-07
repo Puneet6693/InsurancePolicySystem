@@ -3,13 +3,17 @@ import { StoreContext } from '../../services/StoreContext'; // Import StoreConte
 import { useSearchParams } from 'react-router-dom'; // Import useSearchParams to read query parameters
 
 const BuyPolicy = () => {
-    const { token, user } = useContext(StoreContext); // Access token and user from StoreContext
+    const { token } = useContext(StoreContext); // Access token from StoreContext
     const [searchParams] = useSearchParams(); // Initialize useSearchParams
     const policyId = searchParams.get("policyId"); // Get policyId from query params
     const [customerId, setCustomerId] = useState(null); // Customer ID fetched from backend
     const [policyDetails, setPolicyDetails] = useState(null); // Policy details fetched from backend
-    const [message, setMessage] = useState('');
+    const [startDate, setStartDate] = useState(""); // Start date input
+    const [paymentFrequency, setPaymentFrequency] = useState(""); // Payment frequency input
+    const [payableAmount, setPayableAmount] = useState(0); // Payable amount calculated from backend
+    const [message, setMessage] = useState("");
     const [isCustomerRegistered, setIsCustomerRegistered] = useState(false); // Check if user is registered as a customer
+    const [termsAccepted, setTermsAccepted] = useState(false); // Checkbox for terms and conditions
 
     // Fetch customer details
     useEffect(() => {
@@ -37,7 +41,7 @@ const BuyPolicy = () => {
         };
 
         fetchCustomerDetails();
-    }, [user, token]);
+    }, [token]);
 
     // Fetch policy details
     useEffect(() => {
@@ -69,20 +73,77 @@ const BuyPolicy = () => {
         }
     }, [policyId, token]);
 
-    // Buy policy for the registered customer
-    const handleBuyPolicy = async () => {
-        if (!isCustomerRegistered) {
-            setMessage('Please register as a customer before buying a policy.');
+    if (!token) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+                <div className="bg-white p-6 rounded-md shadow-md w-96">
+                <h2 className="text-lg font-bold mb-4 text-center">Login Required</h2>
+                <p className="text-center">You need to be logged in to buy a policy.</p>
+                <p className="text-center mt-4">Please log in to continue.</p>
+                <button
+                    onClick={() => window.location.href = '/Login'} // Redirect to login page
+                    className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 mt-4"
+                >
+                    Go to Login
+                </button>
+                </div>
+            </div>
+        ); // Display message if user is not logged in
+    }
+
+    // Calculate payable amount
+    const handleCalculatePayableAmount = async () => {
+        if (!paymentFrequency) {
+            setMessage("Please select a payment frequency.");
             return;
         }
 
         try {
-            const response = await fetch(`https://localhost:7251/api/CustomerPolicies?policyId=${policyId}&customerId=${customerId}`, {
+            const response = await fetch(
+                `https://localhost:7251/api/CustomerPolicies/GetPayableAmount?policyID=${policyId}&paymentFrequency=${paymentFrequency}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`, // Include token in Authorization header
+                    },
+                }
+            );
+
+            if (response.ok) {
+                const data = await response.json();
+                setPayableAmount(data);
+                setMessage("Payable amount calculated successfully!");
+            } else {
+                setMessage("Failed to calculate payable amount. Please try again.");
+            }
+        } catch (error) {
+            console.error('Error calculating payable amount:', error);
+            setMessage("An unexpected error occurred while calculating the payable amount.");
+        }
+    };
+
+    // Buy policy for the registered customer
+    const handleBuyPolicy = async () => {
+        if (!termsAccepted) {
+            setMessage("Please accept the terms and conditions before proceeding.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://localhost:7251/api/CustomerPolicies`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`, // Include token in Authorization header
                 },
+                body: JSON.stringify({
+                    customer_ID: customerId,
+                    policyID: policyId,
+                    startDate,
+                    paymentFrequency,
+                    payableAmount,
+                }),
             });
 
             if (response.ok) {
@@ -90,11 +151,11 @@ const BuyPolicy = () => {
             } else {
                 const errorData = await response.json();
                 console.error('Failed to purchase policy:', errorData);
-                setMessage('Unable to purchase policy. Please try again later.');
+                setMessage("Unable to purchase policy. Please try again later.");
             }
         } catch (error) {
             console.error('Error purchasing policy:', error);
-            setMessage('An unexpected error occurred while purchasing the policy.');
+            setMessage("An unexpected error occurred while purchasing the policy.");
         }
     };
 
@@ -105,31 +166,73 @@ const BuyPolicy = () => {
                 {policyDetails && (
                     <>
                         <p><strong>Policy Name:</strong> {policyDetails.policy_Name}</p>
-                        <p><strong>Premium Amount:</strong> ${policyDetails.premiumAmount}</p>
+                        <p><strong>Premium Amount:</strong> ₹ {new Intl.NumberFormat('en-IN').format(policyDetails.premiumAmount)}</p>
                         <p><strong>Coverage Details:</strong> {policyDetails.coverageDetails}</p>
                         <p><strong>Validity Period:</strong> {policyDetails.validityPeriod}</p>
                     </>
                 )}
-                {!isCustomerRegistered ? (
-                    <>
-                        <p className="text-red-600 mb-4 text-center">You are not registered as a customer.</p>
-                        <button
-                            onClick={() => setMessage('Please contact support to resolve this issue.')}
-                            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
-                        >
-                            Contact Support
-                        </button>
-                    </>
-                ) : (
-                    <>
-                        <button
-                            onClick={handleBuyPolicy}
-                            className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
-                        >
-                            Buy Policy
-                        </button>
-                    </>
-                )}
+                <div className="mt-4">
+                    <label className="block mb-2"><strong>Start Date:</strong></label>
+                    <input
+                        type="date"
+                        className="w-full px-4 py-2 border rounded-md"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        required
+                    />
+                </div>
+                <div className="mt-4">
+                    <label className="block mb-2"><strong>Payment Frequency:</strong></label>
+                    <select
+                        className="w-full px-4 py-2 border rounded-md"
+                        value={paymentFrequency}
+                        onChange={(e) => setPaymentFrequency(e.target.value)}
+                        required
+                    >
+                        <option value="" disabled>Select Frequency</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="half yearly">Half-Yearly</option>
+                        <option value="yearly">Yearly</option>
+                    </select>
+                </div>
+                <div className="mt-4">
+                    <button
+                        onClick={handleCalculatePayableAmount}
+                        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
+                    >
+                        Calculate Payable Amount
+                    </button>
+                </div>
+                <div className="mt-4">
+                    <label className="block mb-2"><strong>Payable Amount:</strong></label>
+                    <input
+                        type="text"
+                        className="w-full px-4 py-2 border rounded-md"
+                        value={typeof payableAmount === 'string' ? payableAmount : `₹ ${new Intl.NumberFormat('en-IN').format(payableAmount)}`}
+                        readOnly
+                    />
+                </div>
+                <div className="mt-4">
+                    <label className="flex items-center">
+                        <input
+                            type="checkbox"
+                            className="mr-2"
+                            checked={termsAccepted}
+                            onChange={(e) => setTermsAccepted(e.target.checked)}
+                        />
+                        I have read and accept all terms and conditions.
+                    </label>
+                </div>
+                <div className="mt-4">
+                    <button
+                        onClick={handleBuyPolicy}
+                        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
+                        disabled={!termsAccepted}
+                    >
+                        Buy Policy
+                    </button>
+                </div>
                 {message && <p className="text-center mt-4 text-green-600">{message}</p>}
             </div>
         </div>
@@ -137,3 +240,7 @@ const BuyPolicy = () => {
 };
 
 export default BuyPolicy;
+
+
+
+

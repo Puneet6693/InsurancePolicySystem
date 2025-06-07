@@ -1,5 +1,7 @@
 // 
 
+// 
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -79,131 +81,181 @@ const UserProfile = () => {
     };
 
     const togglePolicies = () => {
-        setShowPolicies(!showPolicies); // Toggle the visibility of the policies table
+        setShowPolicies(!showPolicies); // Toggle the visibility of the policies section
     };
 
     return (
-        <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold text-center mb-6">User Profile</h2>
-            {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-            <div className="mb-4">
-                <label className="block text-gray-700 font-bold mb-2">Customer ID:</label>
-                <span className="block p-2 bg-gray-100 border border-gray-300 rounded font-bold">{user.customer_ID}</span>
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700 font-bold mb-2">Name:</label>
-                {isEditing ? (
-                    <input
-                        type="text"
-                        name="customer_Name"
-                        value={user.customer_Name}
-                        onChange={handleChange}
-                        className="w-full p-2 border border-gray-300 rounded"
-                    />
-                ) : (
-                    <span className="block p-2 bg-gray-100 border border-gray-300 rounded">{user.customer_Name}</span>
-                )}
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700 font-bold mb-2">Email:</label>
-                {isEditing ? (
-                    <input
-                        type="email"
-                        name="customer_Email"
-                        value={user.customer_Email}
-                        onChange={handleChange}
-                        className="w-full p-2 border border-gray-300 rounded"
-                    />
-                ) : (
-                    <span className="block p-2 bg-gray-100 border border-gray-300 rounded">{user.customer_Email}</span>
-                )}
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700 font-bold mb-2">Phone:</label>
-                {isEditing ? (
-                    <input
-                        type="text"
-                        name="customer_Phone"
-                        value={user.customer_Phone}
-                        onChange={handleChange}
-                        className="w-full p-2 border border-gray-300 rounded"
-                    />
-                ) : (
-                    <span className="block p-2 bg-gray-100 border border-gray-300 rounded">{user.customer_Phone}</span>
-                )}
-            </div>
-            <div className="mb-4">
-                <label className="block text-gray-700 font-bold mb-2">Address:</label>
-                {isEditing ? (
-                    <input
-                        type="text"
-                        name="customer_Address"
-                        value={user.customer_Address}
-                        onChange={handleChange}
-                        className="w-full p-2 border border-gray-300 rounded"
-                    />
-                ) : (
-                    <span className="block p-2 bg-gray-100 border border-gray-300 rounded">{user.customer_Address}</span>
-                )}
-            </div>
-            <div className="text-center">
-                {isEditing ? (
-                    <button
-                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-                        onClick={handleSave}
-                    >
-                        Save
-                    </button>
-                ) : (
-                    <button
-                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700"
-                        onClick={handleEdit}
-                    >
-                        Edit
-                    </button>
-                )}
-            </div>
+        <div className="max-w-6xl mx-auto p-8 bg-gray-50 rounded-lg shadow-xl">
+            <h2 className="text-4xl font-extrabold text-center text-gray-800 mb-10">Your Profile</h2>
+            {error && <p className="text-red-600 text-center mb-6 text-lg font-medium">{error}</p>}
 
-            {/* Button to toggle policies */}
-            <div className="mt-6 text-center">
-                <button
-                    className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700"
-                    onClick={togglePolicies}
-                >
-                    {showPolicies ? 'Hide Policies' : 'My Policies'}
-                </button>
-            </div>
+            <div className="flex flex-col lg:flex-row gap-8">
+                {/* Left Column: User Profile Details */}
+                <div className="lg:w-1/3 p-6 bg-white rounded-lg shadow-md border border-gray-200">
+                    <h3 className="text-2xl font-bold text-gray-700 mb-6 border-b pb-3">Personal Information</h3>
+                    <div className="mb-5">
+                        <label className="block text-gray-600 font-semibold mb-2">Customer ID:</label>
+                        <span className="block p-3 bg-blue-50 text-blue-800 font-extrabold rounded-md text-lg">
+                            {user.customer_ID}
+                        </span>
+                    </div>
+                    <div className="mb-5">
+                        <label className="block text-gray-600 font-semibold mb-2">Name:</label>
+                        {isEditing ? (
+                            <input
+                                type="text"
+                                name="customer_Name"
+                                value={user.customer_Name}
+                                onChange={handleChange}
+                                className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                            />
+                        ) : (
+                            <span className="block p-3 bg-gray-100 text-gray-800 rounded-md">
+                                {user.customer_Name}
+                            </span>
+                        )}
+                    </div>
+                    <div className="mb-5">
+                        <label className="block text-gray-600 font-semibold mb-2">Email:</label>
+                        {isEditing ? (
+                            <input
+                                type="email"
+                                name="customer_Email"
+                                value={user.customer_Email}
+                                onChange={handleChange}
+                                className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                            />
+                        ) : (
+                            <span className="block p-3 bg-gray-100 text-gray-800 rounded-md">
+                                {user.customer_Email}
+                            </span>
+                        )}
+                    </div>
+                    <div className="mb-5">
+                        <label className="block text-gray-600 font-semibold mb-2">Phone:</label>
+                        {isEditing ? (
+                            <input
+                                type="text"
+                                name="customer_Phone"
+                                value={user.customer_Phone}
+                                onChange={handleChange}
+                                className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                            />
+                        ) : (
+                            <span className="block p-3 bg-gray-100 text-gray-800 rounded-md">
+                                {user.customer_Phone}
+                            </span>
+                        )}
+                    </div>
+                    <div className="mb-6">
+                        <label className="block text-gray-600 font-semibold mb-2">Address:</label>
+                        {isEditing ? (
+                            <input
+                                type="text"
+                                name="customer_Address"
+                                value={user.customer_Address}
+                                onChange={handleChange}
+                                className="w-full p-3 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 transition duration-200"
+                            />
+                        ) : (
+                            <span className="block p-3 bg-gray-100 text-gray-800 rounded-md">
+                                {user.customer_Address}
+                            </span>
+                        )}
+                    </div>
+                    <div className="text-center">
+                        {isEditing ? (
+                            <button
+                                className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-md shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-300"
+                                onClick={handleSave}
+                            >
+                                Save Changes
+                            </button>
+                        ) : (
+                            <button
+                                className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-md shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-300"
+                                onClick={handleEdit}
+                            >
+                                Edit Profile
+                            </button>
+                        )}
+                    </div>
+                </div>
 
-            {/* Display Assigned Policies in a Table */}
-            {showPolicies && (
-                <div className="mt-6">
-                    <h3 className="text-xl font-bold mb-4 text-center">Assigned Policies</h3>
-                    {policies.length > 0 ? (
-                        <table className="table-auto w-full border-collapse border border-gray-300">
-                            <thead>
-                                <tr className="bg-gray-200">
-                                    <th className="border border-gray-300 px-4 py-2">Policy Name</th>
-                                    <th className="border border-gray-300 px-4 py-2">Premium Amount</th>
-                                    <th className="border border-gray-300 px-4 py-2">Coverage Details</th>
-                                    <th className="border border-gray-300 px-4 py-2">Validity Period</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {policies.map((policy) => (
-                                    <tr key={policy.policy_ID} className="text-center">
-                                        <td className="border border-gray-300 px-4 py-2">{policy.policy_Name}</td>
-                                        <td className="border border-gray-300 px-4 py-2">${policy.premiumAmount}</td>
-                                        <td className="border border-gray-300 px-4 py-2">{policy.coverageDetails}</td>
-                                        <td className="border border-gray-300 px-4 py-2">{policy.validityPeriod}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <p className="text-gray-600 text-center">No policies assigned.</p>
+                {/* Right Column: Assigned Policies */}
+                <div className="lg:w-2/3 p-6 bg-white rounded-lg shadow-md border border-gray-200">
+                    <h3 className="text-2xl font-bold text-gray-700 mb-6 border-b pb-3">My Policies</h3>
+
+                    <div className="text-center mb-6">
+                        <button
+                            className="px-6 py-3 bg-green-600 text-white font-semibold rounded-md shadow-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-300"
+                            onClick={togglePolicies}
+                        >
+                            {showPolicies ? 'Hide My Policies' : 'View My Policies'}
+                        </button>
+                    </div>
+
+                    {showPolicies && (
+                        <div className="mt-6">
+                            {policies.length > 0 ? (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    {policies.map((policy) => (
+                                        // Check if customerPolicies exist and have data
+                                        policy.customerPolicies && policy.customerPolicies.length > 0 ? (
+                                            policy.customerPolicies.map((customerPolicy) => (
+                                                <div key={customerPolicy.customerPolicy_ID} className="bg-gradient-to-br from-purple-50 to-indigo-100 p-6 rounded-lg shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-xl border border-indigo-200">
+                                                    <h4 className="text-xl font-bold text-indigo-800 mb-3">{policy.policy_Name}</h4>
+                                                    <p className="text-gray-700 mb-2">
+                                                        <span className="font-semibold">Premium:</span> ₹{policy.premiumAmount}
+                                                    </p>
+                                                    <p className="text-gray-700 mb-2">
+                                                        <span className="font-semibold">Coverage:</span> {policy.coverageDetails}
+                                                    </p>
+                                                    <p className="text-gray-700 mb-2">
+                                                        <span className="font-semibold">Validity:</span> {policy.validityPeriod}
+                                                    </p>
+                                                    <p className="text-gray-700 mb-2">
+                                                        <span className="font-semibold">Insured Value:</span> {policy.issuredValue}
+                                                    </p>
+                                                    <p className="text-gray-700 mb-2">
+                                                        <span className="font-semibold">Start Date:</span> {customerPolicy.startDate  }
+                                                    </p>
+                                                    <p className="text-gray-700 mb-2">
+                                                        <span className="font-semibold">End Date:</span> {customerPolicy.endDate }
+                                                    </p>
+                                                    <p className="text-gray-700">
+                                                        <span className="font-semibold">Renew Date:</span> {customerPolicy.renewDate  }
+                                                    </p>
+                                                </div>
+                                            ))
+                                        ) : (
+                                            // Fallback for policies without customerPolicies or empty customerPolicies
+                                            <div key={policy.policyID} className="bg-gradient-to-br from-purple-50 to-indigo-100 p-6 rounded-lg shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-xl border border-indigo-200">
+                                                <h4 className="text-xl font-bold text-indigo-800 mb-3">{policy.policy_Name}</h4>
+                                                <p className="text-gray-700 mb-2">
+                                                    <span className="font-semibold">Premium:</span> ₹{policy.premiumAmount}
+                                                </p>
+                                                <p className="text-gray-700 mb-2">
+                                                    <span className="font-semibold">Coverage:</span> {policy.coverageDetails}
+                                                </p>
+                                                <p className="text-gray-700 mb-2">
+                                                    <span className="font-semibold">Validity:</span> {policy.validityPeriod}
+                                                </p>
+                                                <p className="text-gray-700">
+                                                    <span className="font-semibold">Insured Value:</span> {policy.issuredValue}
+                                                </p>
+                                                <p className="text-gray-500 mt-4 italic">No specific customer policy details available for this general policy.</p>
+                                            </div>
+                                        )
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="text-gray-600 text-center text-lg mt-8">No policies assigned to your account yet.</p>
+                            )}
+                        </div>
                     )}
                 </div>
-            )}
+            </div>
         </div>
     );
 };
