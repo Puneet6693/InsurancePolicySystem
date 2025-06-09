@@ -1,11 +1,13 @@
-// 
-
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom"; // Import useSearchParams for query parameters
 import { StoreContext } from "../services/StoreContext"; // Import StoreContext for token management
 
 const UpdatePolicy = () => {
-    const { token } = useContext(StoreContext); // Access token from StoreContext
-    const [policyId, setPolicyId] = useState(""); // Allow manual input for policy ID
+    const { token } = useContext(StoreContext); // Access token from StoreContext  
+    const navigate = useNavigate(); // Initialize useNavigation for navigation
+    const [searchParams] = useSearchParams(); // Use useSearchParams
+    const id = searchParams.get("id");
+    const [agents, setAgents] = useState([]); // State to store agents
     const [formData, setFormData] = useState({
         policy_Name: "",
         issuredValue: "",
@@ -18,34 +20,59 @@ const UpdatePolicy = () => {
     const [errors, setErrors] = useState({});
     const [message, setMessage] = useState("");
 
-    const handlePolicyIdChange = (e) => {
-        setPolicyId(e.target.value);
-    };
-
-    const fetchPolicy = async () => {
-        if (!policyId.trim()) {
-            setMessage("Error: Policy ID is required.");
-            return;
-        }
-        try {
-            const response = await fetch(`https://localhost:7251/api/Policies/${policyId}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`, // Include token in Authorization header
-                },
-            });
-            if (response.ok) {
-                const policy = await response.json();
-                setFormData(policy);
-                setMessage("Policy details loaded successfully!");
-            } else {
-                setMessage("Error fetching policy details.");
+    useEffect(() => {
+        const fetchPolicy = async () => {
+            if (!id) {
+                setMessage("Error: Policy ID is required.");
+                return;
             }
-        } catch (error) {
-            setMessage("Error fetching policy: " + error.message);
-        }
-    };
+            try {
+                const response = await fetch(`https://localhost:7251/api/Policies/${id}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`, // Include token in Authorization header
+                    },
+                });
+                if (response.ok) {
+                    const policy = await response.json();
+                    setFormData(policy);
+                    setMessage("Policy details loaded successfully!");
+                } else {
+                    setMessage("Error fetching policy details.");
+                }
+            } catch (error) {
+                setMessage("Error fetching policy: " + error.message);
+            }
+        };
+    
+        fetchPolicy();
+        }, [id]);
+
+     useEffect(() => {
+            const fetchAgents = async () => {
+                try {
+                    const response = await fetch("https://localhost:7251/api/Agents", {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`, // Include token in Authorization header
+                        },
+                    });
+     
+                    if (response.ok) {
+                        const agentsData = await response.json();
+                        setAgents(agentsData); // Set agents data
+                    } else {
+                        console.error("Failed to fetch agents:", response.statusText);
+                    }
+                } catch (error) {
+                    console.error("Error fetching agents:", error);
+                }
+            };
+     
+            fetchAgents();
+        }, [token]);
 
     const validate = () => {
         let tempErrors = {};
@@ -69,13 +96,13 @@ const UpdatePolicy = () => {
         e.preventDefault();
         if (!validate()) return;
 
-        if (!policyId.trim()) {
+        if (!id) {
             setMessage("Error: Policy ID is required for updating.");
             return;
         }
 
         try {
-            const response = await fetch(`https://localhost:7251/api/Policies/${policyId}`, {
+            const response = await fetch(`https://localhost:7251/api/Policies/${id}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",
@@ -85,6 +112,11 @@ const UpdatePolicy = () => {
             });
             if (response.ok) {
                 setMessage("Policy updated successfully!");
+                // timer of 5 sec
+                setTimeout(() => {
+                    setMessage(""); // Clear message after 5 seconds
+                    navigate("/admin/policies"); // Redirect to policies page
+                }, 2000);
             } else {
                 setMessage("Error updating policy.");
             }
@@ -98,21 +130,6 @@ const UpdatePolicy = () => {
             <div className="bg-white p-6 rounded-md shadow-md w-2/3"> {/* Increased width */}
                 <h2 className="text-lg font-bold mb-4 text-center">Update Policy</h2>
                 {message && <p className="text-green-600 text-center">{message}</p>}
-                
-                {/* Policy ID Input */}
-                <div className="mb-4">
-                    <input
-                        type="text"
-                        name="policyId"
-                        placeholder="Enter Policy ID"
-                        className="w-full px-4 py-2 border rounded-md"
-                        onChange={handlePolicyIdChange}
-                        value={policyId}
-                    />
-                    <button onClick={fetchPolicy} className="w-full bg-blue-600 text-white py-2 rounded-md mt-2">
-                        Fetch Policy
-                    </button>
-                </div>
 
                 {/* Policy Update Form */}
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -175,18 +192,23 @@ const UpdatePolicy = () => {
                     </select>
                     {errors.validityPeriod && <p style={{ color: "red" }}>{errors.validityPeriod}</p>}
 
-                    <input
-                        type="number"
+                    <select
                         name="agentID"
-                        placeholder="Agent ID"
                         className="w-full px-4 py-2 border rounded-md"
                         onChange={handleChange}
                         value={formData.agentID}
                         required
-                    />
+                    >
+                        <option value="">Select Agent</option>
+                        {agents.map((agent) => (
+                            <option key={agent.agentID} value={agent.agentID}>
+                                {agent.agent_Name} (Id: {agent.agentID})
+                            </option>
+                        ))}
+                    </select>
                     {errors.agentID && <p style={{ color: "red" }}>{errors.agentID}</p>}
 
-                    <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-md">
+                    <button type="submit" className="w-full bg-yellow-600 text-white py-2 rounded-md">
                         Update Policy
                     </button>
                 </form>

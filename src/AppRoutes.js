@@ -1,12 +1,13 @@
 // 
-
+//
+ 
 // AppRoutes.js
 // import React, { useContext } from 'react';
 // import { Route, Routes, Navigate, useLocation, Outlet } from "react-router-dom";
 // import { ToastContainer } from 'react-toastify';
-
+ 
 // // Import all your components
-
+ 
 // import UserDashboardFooter from "./Components/UserDashboardFooter";
 // import Navbar from './Components/Navbar'; // User Navbar
 // import AdminNavbar from './Components/Admin/AdminNavbar'; // Admin Navbar
@@ -24,43 +25,43 @@
 // import ClaimsFetch from './Components/GetAllClaims';
 // import AdminDashboard from './Components/Admin/AdminDashboard'; // Admin Dashboard
 // import CustomerGetAll from './Components/CustomerGetAll'; // Assuming this is where CustomerGetAll is
-
+ 
 // // Import StoreContext
 // import { StoreContext } from './services/StoreContext';
 // import AgentFeatch from './Components/Agent/AgentFeatch';
 // import DeleteAgent from './Components/Agent/DeleteAgent';
 // import RegisterAgent from './Components/Agent/RegisterAgent';
 // //import AgentDashboard from './Components/Agent/AgentDashboard';
-
+ 
 // // Private Route Wrapper (checks for token presence)
 // const PrivateRoute = ({ children }) => {
 //   const { token } = useContext(StoreContext);
 //   return token ? children : <Navigate to="/Login" />;
 // };
-
+ 
 // // Role-Based Route Wrapper (checks for token and specific role)
 // const RoleBasedRoute = ({ children, allowedRoles }) => {
 //   const { token, user } = useContext(StoreContext);
-
+ 
 //   if (!token) {
 //     return <Navigate to="/Login" />;
 //   }
-
+ 
 //   // Ensure user and user.role are available before checking role
 //   if (!user || !user.role) {
 //     // If token exists but user/role is missing (e.g., localStorage corrupted), force logout
 //     // or redirect to login. Redirecting to home might loop if home is protected.
 //     // For now, redirect to '/' which is a public route or to login if it's protected.
 //     console.warn("Token exists but user or role is missing in context. Redirecting to home.");
-//     return <Navigate to="/" />; 
+//     return <Navigate to="/" />;
 //   }
-
+ 
 //   if (allowedRoles.includes(user.role)) {
 //     return children;
 //   } else {
 //     // If role is not allowed, redirect to a default safe page, e.g., the user dashboard
 //     console.warn(`Access denied. User role '${user.role}' not in allowed roles: ${allowedRoles.join(', ')}`);
-//     return <Navigate to="/" />; 
+//     return <Navigate to="/" />;
 //   }
 // };
 // // const AgentLayout = () => {
@@ -70,7 +71,7 @@
 // //     </>
 // //   );
 // // };
-
+ 
 // // Admin Layout Component
 // const AdminLayout = () => {
 //   return (
@@ -80,14 +81,14 @@
 //     </>
 //   );
 // };
-
+ 
 // // Main AppRoutes Component
 // const AppRoutes = () => {
 //   const location = useLocation();
-
+ 
 //   // Determine if the user Navbar should be visible
 //   const isAdminRoute = location.pathname.startsWith('/admin'); // Check if the route starts with /admin
-
+ 
 //   return (
 //     <>
 //       <ToastContainer />
@@ -101,7 +102,7 @@
 //         <Route path="/BuyPolicy" element={<BuyPolicy />} /> {/* This route might need PrivateRoute/RoleBasedRoute later */}
 //         <Route path="/Registration" element={<RegistrationForm />} />
 //         <Route path="/Login" element={<Login />} />
-
+ 
 //         {/* User Specific Protected Routes */}
 //         <Route
 //           path="/PolicyFeatch"
@@ -119,7 +120,7 @@
 //             </PrivateRoute>
 //           }
 //         />
-
+ 
 //         {/* Admin Routes */}
 //         <Route
 //           path="/admin"
@@ -143,7 +144,7 @@
 //           <Route path="register-agent" element={<RegisterAgent />} /> {/* /admin/register-agent */}
 //           {/* Add other admin routes here if they are nested under /admin */}
 //         </Route>
-
+ 
 //         {/* Fallback Route - Catches any undefined routes and redirects to home */}
 //         <Route path="*" element={<Navigate to="/" replace />} />
 //       </Routes></div>
@@ -151,16 +152,16 @@
 //     </>
 //   );
 // };
-
+ 
 // export default AppRoutes;
-
-
-
+ 
+ 
+ 
 import React, { useContext } from 'react';
 import { Route, Routes, Navigate, useLocation, Outlet } from "react-router-dom";
 import { ToastContainer } from 'react-toastify';
-
-// Import all your components 
+ 
+// Import all your components
 import UserDashboardFooter from "./Components/UserDashboardFooter";
 import Navbar from './Components/Navbar'; // User Navbar
 import ClaimList from './Components/ClaimList'; // Assuming this is the component for listing claims
@@ -178,7 +179,7 @@ import DeletePolicy from './Components/DeletePolicy';
 import ClaimsFetch from './Components/GetAllClaims';
 import AdminDashboard from './Components/Admin/AdminDashboard';
 import CustomerGetAll from './Components/CustomerGetAll';
-
+ 
 // Import Agent specific components
 import AgentFeatch from './Components/Agent/AgentFeatch';
 import DeleteAgent from './Components/Agent/DeleteAgent';
@@ -187,30 +188,30 @@ import AgentDashboard from './Components/Agent/AgentDashboard'; // <--- NEW: Imp
 import AgentNavbar from './Components/Agent/AgentNavbar'; // <--- NEW: Assuming you'll have an AgentNavbar
 import UserProfile from './Components/CustomerPolicies/UserProfile';
 import CustomerByPolicyID from './Components/Agent/CustomerByPolicyID'; // Assuming this is the component to fetch customers by policy ID
-
+ 
 // Import StoreContext
 import { StoreContext } from './services/StoreContext';
 import AgentProfile from './Components/Agent/AgentProfile';
-
+ 
 // Private Route Wrapper (checks for token presence)
 const PrivateRoute = ({ children }) => {
   const { token } = useContext(StoreContext);
   return token ? children : <Navigate to="/Login" />;
 };
-
+ 
 // Role-Based Route Wrapper (checks for token and specific role)
 const RoleBasedRoute = ({ children, allowedRoles }) => {
   const { token, user } = useContext(StoreContext);
-
+ 
   if (!token) {
     return <Navigate to="/Login" />;
   }
-
+ 
   if (!user || !user.role) {
     console.warn("Token exists but user or role is missing in context. Redirecting to home.");
     return <Navigate to="/" />;
   }
-
+ 
   if (allowedRoles.includes(user.role)) {
     return children;
   } else {
@@ -218,7 +219,7 @@ const RoleBasedRoute = ({ children, allowedRoles }) => {
     return <Navigate to="/" />;
   }
 };
-
+ 
 // Admin Layout Component
 const AdminLayout = () => {
   return (
@@ -228,7 +229,7 @@ const AdminLayout = () => {
     </>
   );
 };
-
+ 
 // <--- NEW: Agent Layout Component
 const AgentLayout = () => {
   return (
@@ -239,15 +240,15 @@ const AgentLayout = () => {
   );
 };
 // END NEW Agent Layout Component --->
-
+ 
 // Main AppRoutes Component
 const AppRoutes = () => {
   const location = useLocation();
-
+ 
   // Determine if the user Navbar should be visible
   const isAdminRoute = location.pathname.startsWith('/admin');
   const isAgentRoute = location.pathname.startsWith('/agent'); // <--- NEW: Check for agent route
-
+ 
   return (
     <>
       <ToastContainer />
@@ -261,7 +262,7 @@ const AppRoutes = () => {
           <Route path="/BuyPolicy" element={<BuyPolicy />} />
           <Route path="/Registration" element={<RegistrationForm />} />
           <Route path="/Login" element={<Login />} />
-
+ 
           {/* User Specific Protected Routes */}
           <Route
             path="/PolicyFeatch"
@@ -295,7 +296,7 @@ const AppRoutes = () => {
               </PrivateRoute>
             }
           />
-
+ 
           {/* Admin Routes */}
           <Route
             path="/admin"
@@ -317,8 +318,8 @@ const AppRoutes = () => {
             <Route path="delete-agent" element={<DeleteAgent />} />
             <Route path="register-agent" element={<RegisterAgent />} />
           </Route>
-
-          {/* <--- NEW: Agent Routes */}
+ 
+          {/* < Agent Routes */}
           <Route
             path="/agent" // Base path for agent routes
             element={
@@ -329,14 +330,14 @@ const AppRoutes = () => {
           >
             <Route path="policy-to-customer" element={<CustomerByPolicyID />} />
             <Route index element={<AgentDashboard />} /> {/* /agent */}
-            <Route path="dashboard" element={<AgentDashboard />} /> 
+            <Route path="dashboard" element={<AgentDashboard />} />
             <Route path="agentprofile" element={<AgentProfile />} /> {/* /agent/claims */}
             {/* /agent/dashboard */}
            
           </Route>
           {/* END NEW Agent Routes ---> */}
-
-
+ 
+ 
           {/* Fallback Route */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
@@ -346,5 +347,7 @@ const AppRoutes = () => {
     </>
   );
 };
-
+ 
 export default AppRoutes;
+
+ 

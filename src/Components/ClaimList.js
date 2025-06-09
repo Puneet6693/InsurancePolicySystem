@@ -67,13 +67,19 @@ const ClaimList = () => {
                             key={claim.id} 
                             className={`border-2 p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow ${getStatusColor(claim.status)}`}
                         >
-                            <h2 className="text-xl font-semibold mb-3 text-gray-800">{claim.title}</h2>
-                            <p className="mb-4 text-gray-600">{claim.description}</p>
+                            <h2 className="text-xl font-semibold mb-3 text-gray-800">{"Claim #" + claim.claimID}</h2>
+                            <p className="text-gray-700 mb-2">
+                                <span className="font-bold">Policy:</span> {claim.policy.policy_Name}
+                            </p>
+                            <p className="text-gray-700 mb-2">
+                                <span className="font-bold">Claim Amount:</span> ₹{claim.claimAmount}
+                            </p>
+                            <p className="mb-4 text-gray-600">{claim.claimReason}</p>
                             <p className="text-sm font-medium text-gray-500 mb-2">
                                 <span className="font-bold">Status:</span> <span className="capitalize">{claim.status}</span>
                             </p>
                             {claim.adminReason && (
-                                <p className="text-sm font-medium text-red-500">
+                                <p className="text-sm font-medium">
                                     <span className="font-bold">Admin Reason:</span> {claim.adminReason}
                                 </p>
                             )}

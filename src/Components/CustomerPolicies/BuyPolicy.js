@@ -242,24 +242,24 @@
 // export default BuyPolicy;
 import React, { useState, useContext, useEffect } from 'react';
 import { StoreContext } from '../../services/StoreContext';
-import { useSearchParams } from 'react-router-dom';
-import { toast } from 'react-toastify/unstyled';
-
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+ 
 const BuyPolicy = () => {
     const { token } = useContext(StoreContext);
     const [searchParams] = useSearchParams();
     const policyId = searchParams.get("policyId");
+    const navigate = useNavigate(); // For redirection after successful purchase
+ 
     const [customerId, setCustomerId] = useState(null);
     const [policyDetails, setPolicyDetails] = useState(null);
     const [startDate, setStartDate] = useState("");
     const [paymentFrequency, setPaymentFrequency] = useState("");
     const [payableAmount, setPayableAmount] = useState(0);
-    const [message, setMessage] = useState("");
+    const [payableMessage, setPayableMessage] = useState(""); // Separate state for payable amount messages
     const [isCustomerRegistered, setIsCustomerRegistered] = useState(false);
     const [termsAccepted, setTermsAccepted] = useState(false);
-
-    // --- (Keep all useEffect hooks and event handlers as they are) ---
-
+ 
     // Fetch customer details
     useEffect(() => {
         const fetchCustomerDetails = async () => {
@@ -271,7 +271,7 @@ const BuyPolicy = () => {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-
+ 
                 if (response.ok) {
                     const customerData = await response.json();
                     setCustomerId(customerData.customer_ID);
@@ -284,10 +284,10 @@ const BuyPolicy = () => {
                 setIsCustomerRegistered(false);
             }
         };
-
+ 
         fetchCustomerDetails();
     }, [token]);
-
+ 
     // Fetch policy details
     useEffect(() => {
         const fetchPolicyDetails = async () => {
@@ -299,51 +299,51 @@ const BuyPolicy = () => {
                         Authorization: `Bearer ${token}`,
                     },
                 });
-
+ 
                 if (response.ok) {
                     const policyData = await response.json();
                     setPolicyDetails(policyData);
                 } else {
                     console.error('Failed to fetch policy details:', response.statusText);
-                    setMessage('Unable to fetch policy details. Please try again later.');
+                    setPayableMessage('Unable to fetch policy details. Please try again later.');
                 }
             } catch (error) {
                 console.error('Error fetching policy details:', error);
-                setMessage('An error occurred while fetching policy details.');
+                setPayableMessage('An error occurred while fetching policy details.');
             }
         };
-
+ 
         if (policyId) {
             fetchPolicyDetails();
         }
     }, [policyId, token]);
-
+ 
     // Handle login required state
     if (!token) {
         return (
             <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
                 <div className="bg-white p-6 rounded-md shadow-md w-96">
-                <h2 className="text-lg font-bold mb-4 text-center">Login Required</h2>
-                <p className="text-center">You need to be logged in to buy a policy.</p>
-                <p className="text-center mt-4">Please log in to continue.</p>
-                <button
-                    onClick={() => window.location.href = '/Login'}
-                    className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 mt-4"
-                >
-                    Go to Login
-                </button>
+                    <h2 className="text-lg font-bold mb-4 text-center">Login Required</h2>
+                    <p className="text-center">You need to be logged in to buy a policy.</p>
+                    <p className="text-center mt-4">Please log in to continue.</p>
+                    <button
+                        onClick={() => window.location.href = '/Login'}
+                        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 mt-4"
+                    >
+                        Go to Login
+                    </button>
                 </div>
             </div>
         );
     }
-
+ 
     // Calculate payable amount
     const handleCalculatePayableAmount = async () => {
         if (!paymentFrequency) {
-            setMessage("Please select a payment frequency.");
+            setPayableMessage("Please select a payment frequency.");
             return;
         }
-
+ 
         try {
             const response = await fetch(
                 `https://localhost:7251/api/CustomerPolicies/GetPayableAmount?policyID=${policyId}&paymentFrequency=${paymentFrequency}`,
@@ -355,27 +355,27 @@ const BuyPolicy = () => {
                     },
                 }
             );
-
+ 
             if (response.ok) {
                 const data = await response.json();
                 setPayableAmount(data);
-                setMessage("Payable amount calculated successfully!");
+                setPayableMessage("Payable amount calculated successfully!");
             } else {
-                setMessage("Failed to calculate payable amount. Please try again.");
+                setPayableMessage("Failed to calculate payable amount. Please try again.");
             }
         } catch (error) {
             console.error('Error calculating payable amount:', error);
-            setMessage("An unexpected error occurred while calculating the payable amount.");
+            setPayableMessage("An unexpected error occurred while calculating the payable amount.");
         }
     };
-
+ 
     // Buy policy for the registered customer
     const handleBuyPolicy = async () => {
         if (!termsAccepted) {
-            setMessage("Please accept the terms and conditions before proceeding.");
+            toast.error("Please accept the terms and conditions before proceeding.");
             return;
         }
-
+ 
         try {
             const response = await fetch(`https://localhost:7251/api/CustomerPolicies`, {
                 method: 'POST',
@@ -391,27 +391,42 @@ const BuyPolicy = () => {
                     payableAmount,
                 }),
             });
-
+ 
             if (response.ok) {
-                setMessage("Policy purchased successfully!");
-                toast.success("Policy purchased successfully!"); // Show success notification
-                
+                toast.success("Policy purchased successfully!", {
+                    onClose: () => navigate("/Dashboard"), // Redirect to Dashboard after closing the toast
+                });
+            } else if (response.status === 400) {
+                const contentType = response.headers.get("Content-Type");
+                let backendMessage = "Bad Request: Unable to purchase policy.";
+ 
+                if (contentType && contentType.includes("application/json")) {
+                    const errorData = await response.json();
+                    backendMessage = errorData.message || backendMessage;
+                } else {
+                    backendMessage = await response.text(); // Handle plain text response
+                }
+ 
+                console.error("Backend Error Response:", backendMessage);
+                toast.error(backendMessage); // Display backend error in toast
             } else {
                 const errorData = await response.json();
-                console.error('Failed to purchase policy:', errorData);
-                setMessage("Unable to purchase policy. Please try again later.");
+                const backendMessage = errorData.message || "Unable to purchase policy. Please try again later.";
+                console.error("Backend Error Response:", backendMessage);
+                toast.error(backendMessage); // Display backend error in toast for other errors
             }
         } catch (error) {
-            console.error('Error purchasing policy:', error);
-            setMessage("An unexpected error occurred while purchasing the policy.");
+            console.error("Error purchasing policy:", error);
+            const errorMessage = error.message || "An unexpected error occurred while purchasing the policy.";
+            toast.error(errorMessage); // Display unexpected error in toast
         }
     };
-
+ 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-            <div className="bg-white p-6 rounded-md shadow-md w-full max-w-4xl flex flex-col md:flex-row"> {/* Added flex-col md:flex-row and adjusted width */}
+            <div className="bg-white p-6 rounded-md shadow-md w-full max-w-4xl flex flex-col md:flex-row">
                 {/* Left Section for Policy Details */}
-                <div className="md:w-1/2 p-4 border-r md:border-b-0 border-b border-gray-200 md:pr-6 mb-4 md:mb-0"> {/* Added border-r and padding */}
+                <div className="md:w-1/2 p-4 border-r md:border-b-0 border-b border-gray-200 md:pr-6 mb-4 md:mb-0">
                     <h2 className="text-2xl font-bold mb-4 text-center md:text-left">Policy Details</h2>
                     {policyDetails ? (
                         <div className="space-y-3 text-lg">
@@ -419,15 +434,14 @@ const BuyPolicy = () => {
                             <p><strong>Premium Amount:</strong> ₹ {new Intl.NumberFormat('en-IN').format(policyDetails.premiumAmount)}</p>
                             <p><strong>Coverage Details:</strong> <br /> {policyDetails.coverageDetails}</p>
                             <p><strong>Validity Period:</strong> {policyDetails.validityPeriod}</p>
-                            {/* You can add more policy details here if available */}
                         </div>
                     ) : (
                         <p className="text-gray-600">Loading policy details or no policy found...</p>
                     )}
                 </div>
-
+ 
                 {/* Right Section for Buy Policy Form */}
-                <div className="md:w-1/2 p-4 md:pl-6"> {/* Added padding */}
+                <div className="md:w-1/2 p-4 md:pl-6">
                     <h2 className="text-2xl font-bold mb-4 text-center md:text-left">Purchase Policy</h2>
                     <div className="space-y-4">
                         <div>
@@ -438,10 +452,11 @@ const BuyPolicy = () => {
                                 className="w-full px-4 py-2 border rounded-md focus:ring-blue-500 focus:border-blue-500"
                                 value={startDate}
                                 onChange={(e) => setStartDate(e.target.value)}
+                                min={new Date().toISOString().split("T")[0]} // Prevent previous dates
                                 required
                             />
                         </div>
-
+ 
                         <div>
                             <label htmlFor="paymentFrequency" className="block text-md font-medium text-gray-700 mb-1">Payment Frequency:</label>
                             <select
@@ -458,16 +473,25 @@ const BuyPolicy = () => {
                                 <option value="yearly">Yearly</option>
                             </select>
                         </div>
-
+ 
                         <div>
-                            <button
-                                onClick={handleCalculatePayableAmount}
-                                className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                            >
-                                Calculate Payable Amount
-                            </button>
-                        </div>
-
+    <button
+        onClick={handleCalculatePayableAmount}
+        className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+    >
+        Calculate Payable Amount
+    </button>
+    {payableMessage && (
+        <p
+            className={`text-center mt-4 text-lg ${
+                payableMessage.includes("successfully") ? "text-green-600" : "text-red-600"
+            }`}
+        >
+            {payableMessage}
+        </p>
+    )}
+</div>
+ 
                         <div>
                             <label htmlFor="payableAmount" className="block text-md font-medium text-gray-700 mb-1">Payable Amount:</label>
                             <input
@@ -478,7 +502,7 @@ const BuyPolicy = () => {
                                 readOnly
                             />
                         </div>
-
+ 
                         <div className="flex items-center mt-4">
                             <input
                                 type="checkbox"
@@ -491,7 +515,7 @@ const BuyPolicy = () => {
                                 I have read and accept all terms and conditions.
                             </label>
                         </div>
-
+ 
                         <button
                             onClick={handleBuyPolicy}
                             className="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -502,10 +526,8 @@ const BuyPolicy = () => {
                     </div>
                 </div>
             </div>
-            {message && <p className="text-center mt-4 text-lg">{message}</p>}
         </div>
     );
 };
-
+ 
 export default BuyPolicy;
-

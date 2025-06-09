@@ -1,6 +1,8 @@
 import React, { useState, useContext } from "react";
+import axios from "axios"; // Import axios for API calls
 import { StoreContext } from "../services/StoreContext"; // Import StoreContext for token management
-
+import { useNavigate } from "react-router-dom"; // Import useNavigate for redirection
+ 
 const AddCustomer = () => {
     const { token } = useContext(StoreContext); // Access token from StoreContext
     const [formData, setFormData] = useState({
@@ -9,67 +11,78 @@ const AddCustomer = () => {
         customer_Address: "",
     });
     const [errors, setErrors] = useState({});
-    const [formSubmitted, setFormSubmitted] = useState(false); // Track form submission state
     const [message, setMessage] = useState("");
-
+    const navigate = useNavigate(); // Initialize useNavigate for redirection
+ 
     // Validation function
     const validate = () => {
         let tempErrors = {};
-        if (!formData.customer_Name.trim()) tempErrors.customer_Name = "Customer Name is required!";
-        if (!formData.customer_Phone || isNaN(formData.customer_Phone)) tempErrors.customer_Phone = "Valid Phone Number is required!";
-        if (!formData.customer_Address.trim()) tempErrors.customer_Address = "Customer Address is required!";
+ 
+        // Customer Name validation
+        if (!formData.customer_Name.trim()) {
+            tempErrors.customer_Name = "Customer Name is required!";
+        } else if (!/^[A-Za-z]+$/.test(formData.customer_Name)) {
+            tempErrors.customer_Name = "Customer Name can only contain alphabets!";
+        }
+ 
+        // Customer Phone validation
+        if (!formData.customer_Phone || isNaN(formData.customer_Phone)) {
+            tempErrors.customer_Phone = "Valid Phone Number is required!";
+        }
+ 
+        // Customer Address validation
+        if (!formData.customer_Address.trim()) {
+            tempErrors.customer_Address = "Customer Address is required!";
+        }
+ 
         setErrors(tempErrors);
         return Object.keys(tempErrors).length === 0;
     };
-
+ 
     // Handle input changes
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
-
+ 
     // Handle form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setFormSubmitted(true); // Set form as submitted
         setMessage(""); // Clear previous messages
         if (!validate()) return;
-
+ 
         try {
-            const response = await fetch("https://localhost:7251/api/Customers", {
-                method: "POST",
+            const response = await axios.post("https://localhost:7251/api/Customers", formData, {
                 headers: {
-                    "Content-Type": "application/json",
                     Authorization: `Bearer ${token}`, // Include token in Authorization header
                 },
-                body: JSON.stringify(formData),
             });
-
-            const responseData = await response.text(); // Parse plain text response
-            console.log("Server Response:", responseData);
-
-            if (response.ok) {
-                setMessage("Customer added successfully!");
-                setFormData({
-                    customer_Name: "",
-                    customer_Phone: "",
-                    customer_Address: "",
-                }); // Reset form fields
-                setErrors({});
-            } else {
-                setMessage("Details already exist.");
-            }
+ 
+            setMessage("Customer added successfully!");
+            setFormData({
+                customer_Name: "",
+                customer_Phone: "",
+                customer_Address: "",
+            }); // Reset form fields
+            setErrors({});
+            navigate("/Dashboard"); // Redirect to Dashboard after successful addition
         } catch (error) {
-            console.error("Error submitting customer:", error);
-            setMessage("Something went wrong. Please try again later.");
+            console.error("Backend Error Response:", error.response);
+            if (error.response && error.response.data) {
+                const backendMessage = error.response.data.message || "Customer phone number already exists. Please use a different phone number.";
+                setMessage(backendMessage);
+                setErrors({ customer_Phone: backendMessage });
+            } else {
+                setMessage("An unexpected error occurred. Please try again.");
+            }
         }
     };
-
+ 
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100">
             <div className="bg-white p-6 rounded-md shadow-md w-96">
                 <h2 className="text-lg font-bold mb-4 text-center">Enter Customer Details</h2>
-                {message && <p className="text-green-600 text-center">{message}</p>}
-                
+                {message && <p className={`text-center ${message.startsWith("Customer phone") ? "text-red-600" : "text-green-600"}`}>{message}</p>}
+               
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <input
                         type="text"
@@ -81,7 +94,7 @@ const AddCustomer = () => {
                         required
                     />
                     {errors.customer_Name && <p style={{ color: "red" }}>{errors.customer_Name}</p>}
-
+ 
                     <input
                         type="number"
                         name="customer_Phone"
@@ -92,7 +105,7 @@ const AddCustomer = () => {
                         required
                     />
                     {errors.customer_Phone && <p style={{ color: "red" }}>{errors.customer_Phone}</p>}
-
+ 
                     <input
                         type="text"
                         name="customer_Address"
@@ -103,8 +116,8 @@ const AddCustomer = () => {
                         required
                     />
                     {errors.customer_Address && <p style={{ color: "red" }}>{errors.customer_Address}</p>}
-
-                    <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-md" disabled={formSubmitted}>
+ 
+                    <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-md">
                         Add Customer
                     </button>
                 </form>
@@ -112,5 +125,5 @@ const AddCustomer = () => {
         </div>
     );
 };
-
+ 
 export default AddCustomer;

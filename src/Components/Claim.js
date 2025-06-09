@@ -2,11 +2,12 @@
 
 import axios from "axios";
 import React, { useState, useContext, useEffect } from "react";
- 
+import { useNavigate } from "react-router-dom"; // Import useNavigate for navigation
 import { StoreContext } from "../services/StoreContext";
  
 const ClaimForm = () => {
-    const { token } = useContext(StoreContext); 
+    const { token } = useContext(StoreContext);
+    const navigate = useNavigate(); // Initialize useNavigate for navigation
     const [formData, setFormData] = useState({
         policyID: "",
         customer_ID: "", // Default to 0 since customer_ID is an integer
@@ -51,7 +52,7 @@ const ClaimForm = () => {
                 setPolicies([]); // Clear policies if customer_ID is empty or undefined
                 return;
             }
-
+ 
             try {
                 const response = await axios.get(
                     `https://localhost:7251/GetAllPoliciesByCustomerId?id=${formData.customer_ID}`,
@@ -66,30 +67,47 @@ const ClaimForm = () => {
                 setPolicies([]); // Clear policies on error
             }
         };
-
+ 
         fetchPolicies();
     }, [formData.customer_ID, token]); // Dependency array ensures this runs when customer_ID or token changes
-
+ 
     const validate = () => {
         let tempErrors = {};
+ 
+        // Validate policy selection
         if (!formData.policyID.trim()) tempErrors.policyID = "Policy selection is required!";
+ 
+        // Validate customer ID
         if (!formData.customer_ID || isNaN(formData.customer_ID)) tempErrors.customer_ID = "Valid Customer ID is required!";
-        if (!formData.claimAmount.trim() || isNaN(formData.claimAmount)) tempErrors.claimAmount = "Valid Claim Amount is required!";
-        if (!formData.claimReason.trim()) tempErrors.claimReason = "Claim Reason is required!";
-
+ 
+        // Validate claim amount
+        if (!formData.claimAmount.trim() || isNaN(formData.claimAmount)) {
+            tempErrors.claimAmount = "Valid Claim Amount is required!";
+        } else if (parseFloat(formData.claimAmount) < 100) {
+            tempErrors.claimAmount = "Claim Amount must be at least 100!";
+        }
+ 
+        // Validate claim reason (minimum character count of 30)
+        if (!formData.claimReason.trim()) {
+            tempErrors.claimReason = "Claim Reason is required!";
+        } else if (formData.claimReason.trim().length < 10) {
+            tempErrors.claimReason = "Claim Reason must contain at least 10 characters!";
+        }
+ 
         setErrors(tempErrors);
         return Object.keys(tempErrors).length === 0;
     };
-
+ 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
+ 
         // Update formData
         setFormData((prevFormData) => ({
             ...prevFormData,
             [name]: value,
         }));
     };
+ 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validate()) return;
@@ -113,8 +131,10 @@ const ClaimForm = () => {
                 policyID: "",
                 customer_ID: formData.customer_ID, // Keep the customer_ID after form reset
                 claimAmount: "",
+                claimReason: "",
             });
             setErrors({});
+            navigate("/ClaimList"); // Redirect to the Claims page after successful submission
         } catch (error) {
             // Handle backend error and display the message on the UI
             if (error.response && error.response.data) {
@@ -172,7 +192,7 @@ const ClaimForm = () => {
                         required
                     />
                     {errors.claimAmount && <p style={{ color: "red" }}>{errors.claimAmount}</p>}
-                        
+ 
                     <textarea
                         name="claimReason"
                         placeholder="Claim Reason"
@@ -183,7 +203,7 @@ const ClaimForm = () => {
                         rows="4"
                     ></textarea>
                     {errors.claimReason && <p style={{ color: "red" }}>{errors.claimReason}</p>}
-
+ 
                     <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-md">
                         Add Claim
                     </button>
@@ -194,6 +214,3 @@ const ClaimForm = () => {
 };
  
 export default ClaimForm;
- 
-
- 

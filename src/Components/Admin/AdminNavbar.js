@@ -108,15 +108,6 @@ const AdminNavbar = () => {
                                 </li>
                                 <li>
                                     <Link
-                                        to="/admin/update-policy"
-                                        className="block px-5 py-2 hover:bg-yellow-100 transition-colors duration-200"
-                                        onClick={closeAllDropdowns}
-                                    >
-                                        Update Policy
-                                    </Link>
-                                </li>
-                                <li>
-                                    <Link
                                         to="/admin/delete-policy"
                                         className="block px-5 py-2 hover:bg-yellow-100 rounded-b-lg transition-colors duration-200"
                                         onClick={closeAllDropdowns}

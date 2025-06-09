@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
+        
 import { StoreContext } from "../services/StoreContext"; // Import the context for the token
 
 const ClaimsFetch = () => {
@@ -40,7 +42,9 @@ const ClaimsFetch = () => {
                     },
                 }
             );
-            alert(`Claim ${claimID} updated to ${status} with reason: ${reason}`);
+            toast.success(
+                `Claim ${claimID} updated successfully to ${status} with reason: ${reason}`
+            );
             // Update the local state to reflect the new status and reason
             setClaims((prevClaims) =>
                 prevClaims.map((claim) =>
@@ -50,11 +54,11 @@ const ClaimsFetch = () => {
             setPopupData({ isOpen: false, claimID: null, status: "", reason: "" }); // Close the popup
         } catch (err) {
             if (err.response && err.response.status === 401) {
-                alert("You are not authorized to update the claim status. Please contact the administrator.");
+                toast.error("You are not authorized to update the claim status. Please contact the administrator.")
             } else {
-                alert("Failed to update claim status. Please try again.");
+                toast.error("Failed to update claim status. Please try again.");
             }
-            console.error("Error updating claim status:", err);
+            // console.error("Error updating claim status:", err);
         }
     };
 
