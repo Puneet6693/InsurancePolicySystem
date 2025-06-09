@@ -190,6 +190,7 @@ import CustomerByPolicyID from './Components/Agent/CustomerByPolicyID'; // Assum
 
 // Import StoreContext
 import { StoreContext } from './services/StoreContext';
+import AgentProfile from './Components/Agent/AgentProfile';
 
 // Private Route Wrapper (checks for token presence)
 const PrivateRoute = ({ children }) => {
@@ -328,10 +329,10 @@ const AppRoutes = () => {
           >
             <Route path="policy-to-customer" element={<CustomerByPolicyID />} />
             <Route index element={<AgentDashboard />} /> {/* /agent */}
-            <Route path="dashboard" element={<AgentDashboard />} /> {/* /agent/dashboard */}
-            {/* Add other agent-specific nested routes here */}
-            {/* Example: <Route path="customers" element={<AgentCustomerList />} /> */}
-            {/* Example: <Route path="claims" element={<AgentClaimManagement />} /> */}
+            <Route path="dashboard" element={<AgentDashboard />} /> 
+            <Route path="agentprofile" element={<AgentProfile />} /> {/* /agent/claims */}
+            {/* /agent/dashboard */}
+           
           </Route>
           {/* END NEW Agent Routes ---> */}
 

@@ -93,12 +93,12 @@ const UserProfile = () => {
                 {/* Left Column: User Profile Details */}
                 <div className="lg:w-1/3 p-6 bg-white rounded-lg shadow-md border border-gray-200">
                     <h3 className="text-2xl font-bold text-gray-700 mb-6 border-b pb-3">Personal Information</h3>
-                    <div className="mb-5">
+                    {/* <div className="mb-5">
                         <label className="block text-gray-600 font-semibold mb-2">Customer ID:</label>
                         <span className="block p-3 bg-blue-50 text-blue-800 font-extrabold rounded-md text-lg">
                             {user.customer_ID}
                         </span>
-                    </div>
+                    </div> */}
                     <div className="mb-5">
                         <label className="block text-gray-600 font-semibold mb-2">Name:</label>
                         {isEditing ? (
@@ -198,60 +198,51 @@ const UserProfile = () => {
                     {showPolicies && (
                         <div className="mt-6">
                             {policies.length > 0 ? (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    {policies.map((policy) => (
-                                        // Check if customerPolicies exist and have data
-                                        policy.customerPolicies && policy.customerPolicies.length > 0 ? (
-                                            policy.customerPolicies.map((customerPolicy) => (
-                                                <div key={customerPolicy.customerPolicy_ID} className="bg-gradient-to-br from-purple-50 to-indigo-100 p-6 rounded-lg shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-xl border border-indigo-200">
-                                                    <h4 className="text-xl font-bold text-indigo-800 mb-3">{policy.policy_Name}</h4>
-                                                    <p className="text-gray-700 mb-2">
-                                                        <span className="font-semibold">Premium:</span> ₹{policy.premiumAmount}
-                                                    </p>
-                                                    <p className="text-gray-700 mb-2">
-                                                        <span className="font-semibold">Coverage:</span> {policy.coverageDetails}
-                                                    </p>
-                                                    <p className="text-gray-700 mb-2">
-                                                        <span className="font-semibold">Validity:</span> {policy.validityPeriod}
-                                                    </p>
-                                                    <p className="text-gray-700 mb-2">
-                                                        <span className="font-semibold">Insured Value:</span> {policy.issuredValue}
-                                                    </p>
-                                                    <p className="text-gray-700 mb-2">
-                                                        <span className="font-semibold">Start Date:</span> {customerPolicy.startDate  }
-                                                    </p>
-                                                    <p className="text-gray-700 mb-2">
-                                                        <span className="font-semibold">End Date:</span> {customerPolicy.endDate }
-                                                    </p>
-                                                    <p className="text-gray-700">
-                                                        <span className="font-semibold">Renew Date:</span> {customerPolicy.renewDate  }
-                                                    </p>
-                                                </div>
-                                            ))
-                                        ) : (
-                                            // Fallback for policies without customerPolicies or empty customerPolicies
-                                            <div key={policy.policyID} className="bg-gradient-to-br from-purple-50 to-indigo-100 p-6 rounded-lg shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-xl border border-indigo-200">
-                                                <h4 className="text-xl font-bold text-indigo-800 mb-3">{policy.policy_Name}</h4>
-                                                <p className="text-gray-700 mb-2">
-                                                    <span className="font-semibold">Premium:</span> ₹{policy.premiumAmount}
-                                                </p>
-                                                <p className="text-gray-700 mb-2">
-                                                    <span className="font-semibold">Coverage:</span> {policy.coverageDetails}
-                                                </p>
-                                                <p className="text-gray-700 mb-2">
-                                                    <span className="font-semibold">Validity:</span> {policy.validityPeriod}
-                                                </p>
-                                                <p className="text-gray-700">
-                                                    <span className="font-semibold">Insured Value:</span> {policy.issuredValue}
-                                                </p>
-                                                <p className="text-gray-500 mt-4 italic">No specific customer policy details available for this general policy.</p>
-                                            </div>
-                                        )
-                                    ))}
-                                </div>
-                            ) : (
-                                <p className="text-gray-600 text-center text-lg mt-8">No policies assigned to your account yet.</p>
-                            )}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {policies.map((policy) => {
+            // Get first customer policy details if available
+            const customerPolicy = policy.customerPolicies?.[0]; // Only take the first entry
+
+            return (
+                <div key={policy.policyID} className="bg-gradient-to-br from-purple-50 to-indigo-100 p-6 rounded-lg shadow-lg transform transition duration-300 hover:scale-105 hover:shadow-xl border border-indigo-200">
+                    <h4 className="text-xl font-bold text-indigo-800 mb-3">{policy.policy_Name}</h4>
+                    <p className="text-gray-700 mb-2">
+                        <span className="font-semibold">Premium:</span> ₹{policy.premiumAmount}
+                    </p>
+                    <p className="text-gray-700 mb-2">
+                        <span className="font-semibold">Coverage:</span> {policy.coverageDetails}
+                    </p>
+                    <p className="text-gray-700 mb-2">
+                        <span className="font-semibold">Validity:</span> {policy.validityPeriod}
+                    </p>
+                    <p className="text-gray-700">
+                        <span className="font-semibold">Insured Value:</span> {policy.issuredValue}
+                    </p>
+
+                    {/* Only display customer-specific policy details if available */}
+                    {customerPolicy ? (
+                        <>
+                            <p className="text-gray-700 mb-2">
+                                <span className="font-semibold">Start Date:</span> {customerPolicy.startDate}
+                            </p>
+                            <p className="text-gray-700 mb-2">
+                                <span className="font-semibold">End Date:</span> {customerPolicy.endDate}
+                            </p>
+                            <p className="text-gray-700">
+                                <span className="font-semibold">Renew Date:</span> {customerPolicy.renewDate}
+                            </p>
+                        </>
+                    ) : (
+                        <p className="text-gray-500 mt-4 italic">No specific customer policy details available for this general policy.</p>
+                    )}
+                </div>
+            );
+        })}
+    </div>
+) : (
+    <p className="text-gray-600 text-center text-lg mt-8">No policies assigned to your account yet.</p>
+)}
+
                         </div>
                     )}
                 </div>

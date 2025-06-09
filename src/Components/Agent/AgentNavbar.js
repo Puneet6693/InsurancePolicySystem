@@ -30,10 +30,20 @@ const AgentNavbar = () => {
                     ">
                     Agent Panel
                 </Link>
-
-                {/* Navigation Links */}
                 <div className="flex space-x-8 items-center"> {/* Increased spacing */}
                     <Link 
+                        to="/agent/agentProfile" 
+                        className="
+                            text-white text-lg font-semibold  // Stronger text
+                            hover:text-yellow-300 transition duration-300 ease-in-out // Bright hover
+                            relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-yellow-400 after:transition-all after:duration-300 hover:after:w-full
+                        ">
+                        Agent Profile
+                    </Link>
+
+
+                {/* Navigation Links */}
+                    <Link
                         to="/agent/dashboard" 
                         className="
                             text-white text-lg font-semibold  // Stronger text
