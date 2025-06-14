@@ -4,8 +4,8 @@ import { StoreContext } from "../services/StoreContext"; // Import StoreContext 
 
 const UpdatePolicy = () => {
     const { token } = useContext(StoreContext); // Access token from StoreContext  
-    const navigate = useNavigate(); // Initialize useNavigation for navigation
-    const [searchParams] = useSearchParams(); // Use useSearchParams
+    const navigate = useNavigate(); 
+    const [searchParams] = useSearchParams(); 
     const id = searchParams.get("id");
     const [agents, setAgents] = useState([]); // State to store agents
     const [formData, setFormData] = useState({
@@ -47,7 +47,7 @@ const UpdatePolicy = () => {
         };
     
         fetchPolicy();
-        }, [id]);
+        }, [id,token]);
 
      useEffect(() => {
             const fetchAgents = async () => {
@@ -56,7 +56,7 @@ const UpdatePolicy = () => {
                         method: "GET",
                         headers: {
                             "Content-Type": "application/json",
-                            Authorization: `Bearer ${token}`, // Include token in Authorization header
+                            Authorization: `Bearer ${token}`, 
                         },
                     });
      
@@ -185,10 +185,10 @@ const UpdatePolicy = () => {
                         required
                     >
                         <option value="" disabled>Select Validity Period</option>
-                        <option value="1 Year Cover">1 Year Cover</option>
-                        <option value="2 Year Cover">2 Year Cover</option>
-                        <option value="5 Year Cover">5 Year Cover</option>
-                        <option value="10 Year Cover">10 Year Cover</option>
+                        <option value="Monthly">Monthly</option>
+                        <option value="Yearly">Yearly</option>
+                        <option value="Quarterly">Quarterly</option>
+                        <option value="Half yearly">Half yearly</option>
                     </select>
                     {errors.validityPeriod && <p style={{ color: "red" }}>{errors.validityPeriod}</p>}
 

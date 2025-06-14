@@ -47,6 +47,7 @@ export const Datafetch = () => {
                             <th className="px-6 py-3 text-left font-semibold">Validity Period</th>
                             <th className="px-6 py-3 text-left font-semibold">Agent ID</th>
                             <th className="px-6 py-3 text-left font-semibold">Agent Name</th>
+                            <th className="px-6 py-3 text-left font-semibold">View All Customers</th>
                             <th className="px-6 py-3 text-left font-semibold">Update Policy</th>
                         </tr>
                     </thead>
@@ -62,6 +63,9 @@ export const Datafetch = () => {
                                     <td className="border px-6 py-3">{policy.validityPeriod}</td>
                                     <td className="border px-6 py-3">{policy.agentID}</td>
                                     <td className="border px-6 py-3">{policy.agent?.agent_Name || "N/A"}</td>
+                                    <td className="border px-6 py-3">
+                                        <a href={`/admin/CustomerView?id=${policy.policyID}`} className="text-blue-600 hover:underline">View Customers</a>
+                                    </td>
                                     <td className="border px-6 py-3">
                                         <a href={`/admin/update-policy?id=${policy.policyID}`} className="text-blue-600 hover:underline">Update</a>
                                     </td>

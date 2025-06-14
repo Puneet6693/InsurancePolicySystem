@@ -124,6 +124,8 @@ const UserProfile = () => {
     const togglePolicies = () => {
         setShowPolicies(!showPolicies); // Toggle the visibility of the policies section
     };
+
+    console.log("User Policies:", policies); // Debugging log to check policies data
  
     return (
         <div className="max-w-6xl mx-auto p-8 bg-gray-50 rounded-lg shadow-xl">
